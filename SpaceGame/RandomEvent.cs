@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SpaceGame
 {
@@ -9,52 +7,61 @@ namespace SpaceGame
         protected int difficulty;
         protected bool shouldTrigger => new Random().Next(0, 100) < difficulty;
 
-        public RandomEvent()
+        public RandomEvent(Difficulty difficulty)
         {
-            this.difficulty = 10;
+            this.difficulty = (int)difficulty * 10;
         }
 
-        public RandomEvent(int difficulty)
+        public virtual string Trigger(Ship ship, string defaultMessage = "")
         {
-            this.difficulty = difficulty * 10;
-        }
+            // ship - The players ship
+            // defaultMessage - A message to return when the event did not trigger
 
-        public virtual void Trigger(Ship ship)
-        {
             if (shouldTrigger)
             {
-                if (shouldTrigger) // positive events are twice as unlikely to happen
-                    this.PositiveEvent(ship);
+                if (shouldTrigger)
+                    return PositiveEvent(ship);
                 else
-                    this.NegativeEvent(ship);
+                    return NegativeEvent(ship);
             }
+
+            return defaultMessage;
         }
 
-        public virtual void Trigger(Ship ship, int chance)
+        // Use below overloads if you want to pass in a different probability for the event to occur
+        public virtual string Trigger(Ship ship, int chance, string defaultMessage = "")
         {
+            // chance - A chance out of 100 that this event will trigger
+
             if (new Random().Next(0, 100) < chance)
             {
                 if (new Random().Next(0, 100) < chance)
-                    this.PositiveEvent(ship);
+                    return PositiveEvent(ship);
                 else
-                    this.NegativeEvent(ship);
+                    return NegativeEvent(ship);
             }
+
+            return defaultMessage;
         }
 
-        public virtual void Trigger(Ship ship, int chance, int positiveChance)
+        public virtual string Trigger(Ship ship, int chance, int positiveChance, string defaultMessage = "")
         {
+            // positiveChance - A chance out of 100 that this event will trigger a PositiveEvent
+
             if (new Random().Next(0, 100) < chance)
             {
                 if (new Random().Next(0, 100) < positiveChance)
-                    this.PositiveEvent(ship);
+                    return PositiveEvent(ship);
                 else
-                    this.NegativeEvent(ship);
+                    return NegativeEvent(ship);
             }
+
+            return defaultMessage;
         }
 
-        public abstract void NegativeEvent(Ship ship);
-        public abstract void PositiveEvent(Ship ship);
-        public abstract string GetNegativeEventMessage();
-        public abstract string GetPositiveEventMessage();
+        protected abstract string NegativeEvent(Ship ship); // do something bad to the ship and return a random message
+        protected abstract string PositiveEvent(Ship ship); // do something good to the ship and return a random message
+        protected abstract string GetNegativeEventMessage(); // return a random negative message
+        protected abstract string GetPositiveEventMessage(); // return a random positive message
     }
 }

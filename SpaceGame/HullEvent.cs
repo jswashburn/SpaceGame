@@ -1,36 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SpaceGame
 {
     class HullEvent : RandomEvent
     {
-        // Property getters scale ammount of hull integrity lost/gained with difficulty
+        // Property getters scale amount of hull integrity lost/gained with difficulty
         int hullIntegrityLost => new Random().Next(difficulty / 3, difficulty * 2);
         int hullIntegrityGained => new Random().Next(difficulty, difficulty * 2);
 
-        // Use the base class constructors
-        public HullEvent() : base() { }
-        public HullEvent(int difficulty) : base(difficulty) { }
+        // Use the base class constructor
+        public HullEvent(Difficulty difficulty) : base(difficulty) { }
 
-        // Take away some hull integrity or fuel and display a message
-        public override void NegativeEvent(Ship ship)
+        protected override string NegativeEvent(Ship ship)
         {
             ship.HullIntegrity -= hullIntegrityLost;
-            Console.WriteLine(GetNegativeEventMessage());
+            return GetNegativeEventMessage();
         }
 
-        // Add some hull integrity or fuel and display a message
-        public override void PositiveEvent(Ship ship)
+        protected override string PositiveEvent(Ship ship)
         {
             ship.HullIntegrity += hullIntegrityGained;
-            Console.WriteLine(GetPositiveEventMessage());
+            return GetPositiveEventMessage();
         }
 
-        public override string GetNegativeEventMessage()
+        protected override string GetNegativeEventMessage()
         {
-            // Some negative travel event messages
             string[] hullMessages = new string[]
             {
                 $"You fell asleep in the cockpit and have hit a small asteroid! The window cracks, causing {hullIntegrityLost} damage to the hull.",
@@ -42,9 +36,8 @@ namespace SpaceGame
             return hullMessages[new Random().Next(0, hullMessages.Length)];
         }
 
-        public override string GetPositiveEventMessage()
+        protected override string GetPositiveEventMessage()
         {
-            // Some positive hull event messages
             string[] hullMessages = new string[]
             {
                 $"Bored on your way to the next planet, you read about a new trick in the Ship Mechanics Weekly magazine, and after following a tutorial, restore {hullIntegrityGained} hull integrity!",
@@ -53,7 +46,6 @@ namespace SpaceGame
                 $"Your shield generator starts working again for no apparant reason! +{hullIntegrityGained} hull integrity."
             };
 
-            // Return a random message
             return hullMessages[new Random().Next(0, hullMessages.Length)];
         }
     }
