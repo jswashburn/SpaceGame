@@ -1,36 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SpaceGame
 {
     class GoldEvent : RandomEvent
     {
-        // Property getters scale ammount of gold lost/gained with difficulty
+        // Property getters scale amount of gold lost/gained with difficulty
         int goldLost => new Random().Next(difficulty / 3, difficulty * 2);
         int goldGained => new Random().Next(difficulty, difficulty * 2);
 
-        // Use the base class constructors
-        public GoldEvent() : base() { }
-        public GoldEvent(int difficulty) : base(difficulty) { }
+        // Use the base class constructor
+        public GoldEvent(Difficulty difficulty) : base(difficulty) { }
 
-        // Take away some gold and display a message
-        public override void NegativeEvent(Ship ship)
+        protected override string NegativeEvent(Ship ship)
         {
             ship.Coins -= goldLost;
-            Console.WriteLine(GetNegativeEventMessage());
+            return GetNegativeEventMessage();
         }
 
-        // Add some gold and display a message
-        public override void PositiveEvent(Ship ship)
+        protected override string PositiveEvent(Ship ship)
         {
             ship.Coins += goldGained;
-            Console.WriteLine(GetPositiveEventMessage());
+            return GetPositiveEventMessage();
         }
 
-        public override string GetNegativeEventMessage()
+        protected override string GetNegativeEventMessage()
         {
-            // Some negative store event messages
             string[] messages = new string[]
             {
                 $"Oh no! You have tripped and {goldLost} gold has flown out of your pocket!",
@@ -40,13 +34,11 @@ namespace SpaceGame
                 $"You stop by some slot machines while shopping. You lost {goldLost} gold."
             };
 
-            // Return a random message
             return messages[new Random().Next(0, messages.Length)];
         }
 
-        public override string GetPositiveEventMessage()
+        protected override string GetPositiveEventMessage()
         {
-            // Some positive store event messages
             string[] messages = new string[]
             {
                 $"You stop by some slot machines while shopping. You won {goldGained} gold!",
@@ -56,7 +48,6 @@ namespace SpaceGame
                 $"Your dogecoin stock has earned you {goldGained} gold!"
             };
 
-            // Return a random message
             return messages[new Random().Next(0, messages.Length)];
         }
     }
