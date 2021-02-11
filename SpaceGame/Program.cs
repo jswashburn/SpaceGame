@@ -16,8 +16,6 @@ namespace SpaceGame
             Planet p4 = new Planet("Dagobah", "Fuel", difficulty, 100, 15, 100);
             Planet p5 = new Planet("Cybertron", "Hull Material", difficulty, 100, 200, 15);
             ///////////////////////////////Place me after the player initializes character///////////////////////////////
-
-
         }
 
         static void DisplayMessageOnEnter(string message)
