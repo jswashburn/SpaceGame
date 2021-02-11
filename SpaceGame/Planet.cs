@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using SpaceGame.Ship;
 
 namespace SpaceGame
 {
@@ -9,72 +8,73 @@ namespace SpaceGame
     {
         string PlanetName { get; set; }
         string PlanetResource { get; set; }
-        int PlanetMultiplier { get; set; }
+        int PlanetDifficulty { get; set; }
         (int, int) PlanetCords { get; set; }
         int PlanetGoldCost { get; set; }
         int PlanetFuelCost { get; set; }
         int PlanetHullCost { get; set; }
 
-        internal Planet(string name, string resource, int multiplier, (int x, int y) cords, int goldCost, int fuelCost, int hullCost)
+        internal Planet(string name, string resource, Difficulty difficulty, int goldCost, int fuelCost, int hullCost)
         {
+            Random r = new Random();
             this.PlanetName = name;
             this.PlanetResource = resource;
-            this.PlanetMultiplier = multiplier;
-            this.PlanetCords = cords;
+            this.PlanetDifficulty = (int)difficulty++;
+            this.PlanetCords = (r.Next(1, 101), r.Next(1, 101));
             this.PlanetGoldCost = goldCost;
             this.PlanetFuelCost = fuelCost;
             this.PlanetHullCost = hullCost;
         }
-        internal double DistanceToShip(int x, int y) //returns difference of caller and current planet
+        internal int DistanceToShip(int x, int y) //returns difference of caller and current planet
         {
             double z = Math.Sqrt((x * x) + (y * y));
             (int px, int py) = PlanetCords;
             double pz = Math.Sqrt((px * px) + (py * py));
-            return Math.Abs(z - pz);
+            return (int)Math.Round(Math.Abs(z - pz));
         }
         internal string ShowStore()
         {
-            return $"{ShipTime} days remaining.\n\nYou have the following resorces:\n{ShipGold} gold.\n{ShipFuel} fuel.\n{ShipHull}/{ShipHullMax} hull integrity." +
-                $"\n\n\nGold is available for {PlanetGoldCost} coin\nFuel is available for {PlanetFuelCost} coin\nHull repair parts are avable for {PlanetHullCost} coin";
+            return $"Gold is available for {PlanetGoldCost} coin\nFuel is available for {PlanetFuelCost} coin\nHull repair parts are avable for {PlanetHullCost} coin";
         }
 
-        internal void Sell(string switchCase, int amount)
+        internal int Sell(string switchCase, int amount)
         {
-            switch (switchCase)
+            int coin = 0;
+            switch (switchCase.ToLower())
             {
-                case "1":
-                    ShipGold -= amount;
-                    ShipCoin += (amount * PlanetGoldCost) / 2;
-                case "2":
-                    ShipFuel -= amount;
-                    ShipCoin += (amount * PlanetFuelCost) / 2;
+                case "gold":
+                    coin = amount * PlanetGoldCost / PlanetDifficulty;
                     break;
-                case "3":
-                    ShipHull -= amount;
-                    ShipCoin += (amount * PlanetHullCost) / 2;
+                case "fuel":
+                    coin = amount * PlanetFuelCost / PlanetDifficulty;
+                    break;
+                case "hull":
+                    coin = amount * PlanetHullCost / PlanetDifficulty;
                     break;
             }
+            return coin;
         }
-        internal void Buy(string switchCase, int amount)
+        internal int Buy(string switchCase, int amount)
         {
-            switch (switchCase)
+            int item = 0;
+            switch (switchCase.ToLower())
             {
-                case "1":
-                    ShipGold += amount;
-                    ShipCoin -= amount * PlanetGoldCost;
-                case "2":
-                    ShipFuel += amount;
-                    ShipCoin -= amount * PlanetFuelCost;
+                case "gold":
+                    item = amount * PlanetGoldCost;
                     break;
-                case "3":
-                    ShipHull += amount;
-                    ShipCoin -= amount * PlanetHullCost;
+                case "fuel":
+                    item = amount * PlanetFuelCost;
+                    break;
+                case "hull":
+                    item = amount * PlanetHullCost;
                     break;
             }
+            return item;
         }
-        internal void Mine()
+        internal int Mine(int days)
         {
-
+            return days *= PlanetDifficulty * PlanetDifficulty;
         }
+        internal (string, string) GetNnameAndResource() => (PlanetName, PlanetResource);
     }
 }
