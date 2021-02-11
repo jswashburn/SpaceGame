@@ -7,7 +7,15 @@ namespace SpaceGame
     {
         static void Main(string[] args)
         {
-            DisplayMessageOnEnter(new EasterEggEvent(Difficulty.Hard).Trigger(new Ship()));
+            ///////////////////////////////Place me after the player initializes character///////////////////////////////
+            Difficulty difficulty = Difficulty.Easy; //this will be intialized by the player
+
+            Planet p1 = new Planet("Gallifrey", "Gold", difficulty, 15, 100, 100);
+            Planet p2 = new Planet("Cadia", "Gold", difficulty, 15, 100, 100);
+            Planet p3 = new Planet("Caprica", "Fuel", difficulty, 100, 15, 100);
+            Planet p4 = new Planet("Dagobah", "Fuel", difficulty, 100, 15, 100);
+            Planet p5 = new Planet("Cybertron", "Hull Material", difficulty, 100, 200, 15);
+            ///////////////////////////////Place me after the player initializes character///////////////////////////////
         }
 
         static void DisplayMessageOnEnter(string message)
