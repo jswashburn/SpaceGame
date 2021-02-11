@@ -7,7 +7,7 @@ namespace SpaceGame
     {
         static void Main(string[] args)
         {
-            
+            DisplayMessageOnEnter(new EasterEggEvent(Difficulty.Hard).Trigger(new Ship()));
         }
 
         static void DisplayMessageOnEnter(string message)
