@@ -10,22 +10,13 @@ namespace SpaceGame
 
         public string Name { get; set; } = null;
 
-        public bool GameOverFlag { get; set; } = false; // set to false so the game will run
-
-        public difficulty difficultyLevel = difficulty.Easy;  // default difficulty of easy+
+        public Difficulty difficultyLevel = Difficulty.Easy;  // default difficulty of easy+
 
         private List<string> MainMenuOptions = new List<string>() { "New Game", "Load Game", "Quit" };
 
         private List<string> ResourceOptons = new List<string>()
             {"Dark Mater", "Gold", "Hull Integrity", "Resource Capacity"};
 
-        public enum difficulty
-        {
-            Easy,
-            Medium,
-            Hard,
-            Advanced
-        }
 
         public void ShowMainMenu()
         {
@@ -70,7 +61,7 @@ namespace SpaceGame
             Console.WriteLine("".PadRight(length, x));
         }
 
-        private int GetUserInput(List<string> menu)
+        public int GetUserInput(int menuLength)
         {
             string input = Console.ReadLine();
             int selection;
@@ -84,7 +75,7 @@ namespace SpaceGame
                     Console.SetCursorPosition(0, Console.CursorTop - 2);
                     Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
                 }
-                else if (j >= (menu.Count + 1) || j <= 0)
+                else if (j > menuLength || j <= 0)
                 {
                     Console.WriteLine("Number is not in menu range");
                     Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");

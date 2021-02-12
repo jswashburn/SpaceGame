@@ -4,6 +4,20 @@ using System.Text;
 
 namespace SpaceGame
 {
+    public enum Store
+    {
+        buy = 1,
+        sell
+    }
+
+    public enum PlanetOptions
+    {
+        store = 1,
+        mine,
+        get_name_and_resources,
+        travel
+    }
+
     internal class Planet
     {
         string PlanetName { get; set; }
@@ -13,6 +27,7 @@ namespace SpaceGame
         int PlanetGoldCost { get; set; }
         int PlanetFuelCost { get; set; }
         int PlanetHullCost { get; set; }
+
 
         internal Planet(string name, string resource, Difficulty difficulty, int goldCost, int fuelCost, int hullCost)
         {
@@ -25,13 +40,16 @@ namespace SpaceGame
             this.PlanetFuelCost = fuelCost;
             this.PlanetHullCost = hullCost;
         }
+
         internal int DistanceToShip(int x, int y) //returns difference of caller and current planet
         {
             double z = Math.Sqrt((x * x) + (y * y));
             (int px, int py) = PlanetCords;
             double pz = Math.Sqrt((px * px) + (py * py));
             return (int)Math.Round(Math.Abs(z - pz));
+            //TODO convert PZ into days
         }
+
         internal string ShowStore()
         {
             return $"Gold is available for {PlanetGoldCost} coin\nFuel is available for {PlanetFuelCost} coin\nHull repair parts are avable for {PlanetHullCost} coin";
@@ -54,6 +72,7 @@ namespace SpaceGame
             }
             return coin;
         }
+
         internal int Buy(string switchCase, int amount)
         {
             int item = 0;
@@ -71,10 +90,12 @@ namespace SpaceGame
             }
             return item;
         }
+
         internal int Mine(int days)
         {
             return days *= PlanetDifficulty * PlanetDifficulty;
         }
+
         internal (string, string) GetNnameAndResource() => (PlanetName, PlanetResource);
     }
 }

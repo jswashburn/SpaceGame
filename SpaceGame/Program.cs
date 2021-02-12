@@ -1,83 +1,141 @@
 ﻿using System;
+using System.Threading;
+
 
 namespace SpaceGame
 {
     // RANDOM EVENT SYSTEM DEMO
 
-    // my change here
     class Program
     {
         static void Main(string[] args)
         {
-            ///////////////////////////////Place me after the player initializes character///////////////////////////////
-            Difficulty difficulty = Difficulty.Easy; //this will be intialized by the player
+            #region PseudoCode
 
-            Planet p1 = new Planet("Gallifrey", "Gold", difficulty, 15, 100, 100);
-            Planet p2 = new Planet("Cadia", "Gold", difficulty, 15, 100, 100);
-            Planet p3 = new Planet("Caprica", "Fuel", difficulty, 100, 15, 100);
-            Planet p4 = new Planet("Dagobah", "Fuel", difficulty, 100, 15, 100);
-            Planet p5 = new Planet("Cybertron", "Hull Material", difficulty, 100, 200, 15);
-            ///////////////////////////////Place me after the player initializes character///////////////////////////////
-        }
-
-        static void DisplayMessageOnEnter(string message)
-        {
-            Console.ReadLine();
-            Console.Clear();
-            Console.WriteLine(message);
-        }
-
-        static void RandomEventsDemo(Difficulty difficulty)
-        {
-            // Difficulty:
-
-            // Hard - event runs 30% of the time
-            // Medium - event runs 20% of the time
-            // Easy - event runs 10% of the time
-
-            // Events - set to hard difficulty for the demo
-            HullEvent hullEvent = new HullEvent(difficulty);
-            FuelEvent fuelEvent = new FuelEvent(difficulty);
-            GoldEvent goldEvent = new GoldEvent(difficulty);
-            TimeEvent timeEvent = new TimeEvent(difficulty);
-
-            Console.WriteLine("Starting sim [CTRL-C to exit]");
-            while (true)
             {
-                // DEMO ONLY
+                //start game
+                //show main menu (jason)
+                // get username
+                // difficulty (jason TODO)
+                // initialize planets
+                // initialize events
+                // initialize ship
+                // show game setting/start scenario
+                // while (!GameOver(checks fuel, hull, etc))
+                //TODO maksim static gameover method()
+                //ShowPlanetOptions() "mine, store, sell, buy, getN&R, travel"
+                //Get user input
+                //if user input == store
+                //p1.ShowStore FOR STARTING PLANET
+                //if user input == sell
+                //sell(name, amount)
+                // Event
+                //if user input == buy
+                //buy(name, amount)
+                // Event
+                //if user input == mine
+                //mine(days), run random event
+                //if user input == get name and resources
+                //GetNameResources()
+                //if user input == travel
+                //show all plannets except current
+                //Show each planet natural resource and name
+                //show DistanceToShip(shipX, shipY) = distance in days to planet
+                //get user input
+                //if user input == earth
+                //if all upgrades TRUE and fuel and hull full then WinGame()
+             //change planet, subtract days, run random event, shipX ShipY = PlanetX PlanetY
+             }//Collapsed Pseudocode
 
-                // Random events - These can be triggered at any point we want throughout the program, and return a string describing
-                // the event. Pass in the players ship so the event has something to affect.
-                // When creating events, just pass in a Difficulty enum
+        #endregion
 
-                // --- Simulation for testing random events ---
 
-                // create an example ship
-                Ship vulcan = new Ship();
+            //start game
+                //show main menu (jason)
+            Menu menu = new Menu();
+            menu.ShowMainMenu();
 
-                // show its initial stats
-                DisplayMessageOnEnter($"Created new ship\n{vulcan}");
+            if (menu.GetUserInput(3) == 1) // NEW GAME, GET USERNAME
+            {
+                // difficulty (jason TODO)
+                Difficulty difficulty = Difficulty.Easy; //this will be intialized by the player
+                // initialize planets
+                Planet p1 = new Planet("Gallifrey", "Gold", difficulty, 15, 100, 100);
+                Planet p2 = new Planet("Cadia", "Gold", difficulty, 15, 100, 100);
+                Planet p3 = new Planet("Caprica", "Fuel", difficulty, 100, 15, 100);
+                Planet p4 = new Planet("Dagobah", "Fuel", difficulty, 100, 15, 100);
+                Planet p5 = new Planet("Cybertron", "Hull Material", difficulty, 100, 200, 15);
+                Planet[] planetArray = {p1, p2, p3, p4, p5};
+                // initialize random object
+                Random rng = new Random();
+                // initialize events
 
-                // shops at store...
-                DisplayMessageOnEnter("You go shopping at the local market...");
+                // initialize ship
+                Ship ship = new Ship();
+                Planet StartingPlanet = planetArray[rng.Next(5)]; //gets random starting planet
+                // show game setting/start scenario
+                Utility.ShowSetting(StartingPlanet, ship.Time);
+                Planet CurrentPlanet = StartingPlanet;
+                // while (!GameOver(checks fuel, hull, etc))
+                while (GameOver() == false)//TODO maksim static gameover method()
+                {
+                    CurrentPlanet.ShowPlanetOptions();//"mine, store, sell, buy, getN&R, travel"
+                    
+                    int userInput = menu.GetUserInput(4); //Because there are 4 things to do in the planet menu
+                    if (userInput == (int)PlanetOptions.store)
+                    {
+                        //p1.ShowStore FOR STARTING PLANET
+                        userInput = menu.GetUserInput(2);
+                        if (userInput == (int)Store.sell) //input == 1
+                        {
+                            //sell(name, amount)
+                            // Event
+                        }
+                        else if (userInput == (int)Store.buy) //input == 2
+                        {
+                            //buy(name, amount)
+                            // Event
+                        }
+                        else //return user to prevoius menu
+                        {
+                            Console.WriteLine("Returning to planet menu...");
+                            Thread.Sleep(2000);
+                        }
 
-                // we went to the store, so lets trigger a GoldEvent
-                DisplayMessageOnEnter(goldEvent.Trigger(vulcan));
+                    }
+                    else if (userInput == (int)PlanetOptions.mine)
+                    {
+                        //mine(days), run random event
+                    }
+                    else if (userInput == (int)PlanetOptions.get_name_and_resources)
+                    {
+                        CurrentPlanet.GetNnameAndResource(); //GetNameResources()
+                    }
+                    else if (userInput == (int)PlanetOptions.travel)
+                    {
 
-                DisplayMessageOnEnter(vulcan.ToString());
-
-                // travels to planet...
-                DisplayMessageOnEnter("You start your journey to <planet> ...");
-
-                // we are traveling, so lets trigger a hull event and a fuel event, even a time event
-                DisplayMessageOnEnter(timeEvent.Trigger(vulcan));
-                DisplayMessageOnEnter(hullEvent.Trigger(vulcan));
-                DisplayMessageOnEnter(fuelEvent.Trigger(vulcan));
-
-                DisplayMessageOnEnter(vulcan.ToString());
-
-                DisplayMessageOnEnter("Press enter to run simulation again");
+                            //show all plannets except current
+                            //Show each planet natural resource and name
+                                //show DistanceToShip(shipX, shipY) = distance in days to planet
+                                //get user input
+                                //if user input == earth
+                                    //if all upgrades TRUE and fuel and hull full then WinGame()
+                                //change planet, subtract days, run random event, shipX ShipY = PlanetX PlanetY
+                    }
+                    
+                }
             }
+            else if (menu.GetUserInput(3) == 2) // LOAD GAME
+            {
+                //TODO prompt for username and load game if exists
+            }
+            else //EXIT
+            {
+                Console.WriteLine("Thank you for playing!");
+                Thread.Sleep(2000);
+                Environment.Exit(1);
+            }
+
         }
     }
 }
