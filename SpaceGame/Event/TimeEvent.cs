@@ -33,7 +33,7 @@ namespace SpaceGame
                 $"While watching the news, you see that the alien force invading Earth has destroyed her orbital defense sytem! -{timeLost} days until Earth's destruction."
             };
 
-            return timeMessages[new Random().Next(0, timeMessages.Length)];
+            return timeMessages[new Random().Next(timeMessages.Length)];
         }
 
         protected override string GetPositiveEventMessage()
@@ -46,7 +46,7 @@ namespace SpaceGame
                 $"The Space Force has successfully retaken Mars, a key defense point in Earths solar system. Earth's destruction has been delayed by {timeGained} days."
             };
 
-            return timeMessages[new Random().Next(0, timeMessages.Length)];
+            return timeMessages[new Random().Next(timeMessages.Length)];
         }
     }
 }

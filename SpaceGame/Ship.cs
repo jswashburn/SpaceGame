@@ -1,38 +1,37 @@
 ﻿namespace SpaceGame
 {
-    // EXAMPLE SHIP FOR DEMO ONLY - Jeffrey
     class Ship
     {
-        public int Time { get; set; }      //d
-        public int Coins { get; set; }      //d
-        public int DarkMatter { get; set; }      
-        public int DarkMatterMax { get; set; }  //Tuple?
-        public int Gold { get; set; }           //d
-        public int GoldMax { get; set; }       //Tuple?
-        public int Hull { get; set; }       //d
-        public int HullMax { get; set; }       //Tuple?
-        public string Upgrade { get; set; }
+        public int Time { get; set; }    
+        public int Coins { get; set; }      
         public int Fuel { get; set; }
-        public int FuelCapacity { get; set; }
-        public int HullIntegrity { get; set; }
-        public int ResourceCapacity { get; set; }
+        public int Gold { get; set; }
+        public int Hull { get; set; }    
+        public int FuelMax { get; set; }
+        public int GoldMax { get; set; }      
+        public int HullMax { get; set; }     
+        public bool FuelUpgrade { get; set; }
+        public bool GoldUpgrade { get; set; }
+        public bool HullUpgrade { get; set; }
 
-        public Ship()
+        public Ship(Difficulty difficulty)
         {
-            Time = 500;  //days
-            Coins = 0;
-            DarkMatter = 0;
-            DarkMatterMax = 5000;
-            Gold = 0;
-            GoldMax = 5000;
-            Hull = 0;
-            HullMax = 5000;
-            Upgrade = " "; // bool false/true?
+            Time = 500 * (int)difficulty;  //days
+            Coins = 1000 / (int)difficulty;
+            Fuel = 1000 / (int)difficulty;
+            Gold = 100;
+            Hull = 1000 / (int)difficulty;
+            FuelMax = 1000 / (int)difficulty;
+            GoldMax = 1000 / (int)difficulty;
+            HullMax = 1000 / (int)difficulty;
+            FuelUpgrade = false;
+            GoldUpgrade = false;
+            HullUpgrade = false;
         }
 
         public override string ToString()
         {
-            return $"[SHIP] Hull integrity: {HullIntegrity}, Coin: {Coins}, Fuel: {Fuel}\n" +
+            return $"[SHIP] Hull integrity: {Hull}/{HullMax}, Coin: {Coins}, Fuel: {Fuel}/{FuelMax}, Gold resource: {Gold}\n" +
                 $"[DAYS UNTIL EARTHS DESTRUCTION]: {Time}";
         }
     }
