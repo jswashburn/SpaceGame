@@ -29,10 +29,10 @@ namespace SpaceGame
         static public void ShowSetting(Planet planet, int DaysLeft)
         {
             Console.WriteLine($"You are marooned on a desolate world, light years from Earth." +
-                              $"The name of this planet is {planet.PlanetName}. You remember your purpose, " +
+                              $"\nThe name of this planet is {planet.PlanetName}.\nYou remember your purpose, " +
                               $"the Earth neeeds you and your haul of dark matter to power weapons that will" +
-                              $"subdue an incoming alien invasion. These aliens are {DaysLeft} days from" +
-                              $"Earth. Fully stock your supplies so you can make the perilous journey" +
+                              $"subdue an incoming alien invasion.\nThese aliens are {DaysLeft} days from" +
+                              $"Earth. \nFully upgrade and stock your supplies so you can make the perilous journey" +
                               $"across the cosmos to defend your home.");
         }
 

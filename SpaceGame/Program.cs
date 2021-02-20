@@ -106,26 +106,26 @@ namespace SpaceGame
                         //ShowStore
                         //TODO buy and sell opt dont show
                         //TODO buy and sell text is backwards in some of the statements
-                        Console.WriteLine(CurrentPlanet.ShowPlanetStoreMenu(CurrentPlanet, ship));
+                        Console.WriteLine(CurrentPlanet.ShowStore(CurrentPlanet, ship));
                         Console.WriteLine("Select the material you would like to buy or sell: ");
                         //int selection = Menu.GetUserInput(3);
                         //if (selection == 1)
 
                         userInput = Menu.GetUserInput(2);
-                        if (userInput == (int)Store.sell) //input == 1
+                        if (userInput == (int)Store.buy) //input == 1
                         {
                             //get string of material, get amount they want(int)
                             string material = Menu.StoreBuyMenu();
-                            int amount = Menu.GetAmount("sell"); //"how much would you like to SELL"
-                            Console.WriteLine(CurrentPlanet.Sell(material, amount, ship));//returns string
+                            int amount = Menu.GetAmount("buy"); //"how much would you like to BUY"
+                            Console.WriteLine(CurrentPlanet.Buy(material, amount, ship, CurrentPlanet));//returns string
                             Console.WriteLine(goldEvent.Trigger(ship)); // returns string
                             Console.ReadLine();
                         }
-                        else if (userInput == (int)Store.buy) //input == 2
+                        else if (userInput == (int)Store.sell) //input == 2
                         {
                             string material = Menu.StoreSellMenu();
-                            int amount = Menu.GetAmount("buy"); //"how much would you like to BUY"
-                            Console.WriteLine(CurrentPlanet.Buy(material, amount, ship));
+                            int amount = Menu.GetAmount("sell"); //"how much would you like to SELL"
+                            Console.WriteLine(CurrentPlanet.Sell(material, amount, ship, CurrentPlanet));
                             Console.WriteLine(goldEvent.Trigger(ship));
                             Console.ReadLine();
                         }
@@ -139,13 +139,13 @@ namespace SpaceGame
                     {
                         Console.WriteLine("How many days");
                         int NumDaysToMine = Menu.GetUserInput(ship.Time); //do error checking
-                        Console.WriteLine(CurrentPlanet.Mine(NumDaysToMine, ship));
+                        Console.WriteLine(CurrentPlanet.Mine(NumDaysToMine, ship, CurrentPlanet));
                         Console.WriteLine("Press any key to continue");
                         Console.ReadKey();
                     }
                     else if (userInput == (int)PlanetOptions.get_name_and_resources)
                     {
-                        Console.WriteLine(CurrentPlanet.GetNnameAndResource()); //GetNameResources()
+                        Console.WriteLine(CurrentPlanet.GetNameAndResource()); //GetNameResources()
                         Console.WriteLine("Press any key to continue");
                         Console.ReadKey();
                     }

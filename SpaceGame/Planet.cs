@@ -36,12 +36,6 @@ namespace SpaceGame
             return $"Planet: {PlanetName}. Natural resource: {PlanetResource}.\n[1] Store\n[2] Mine\n[3] Travel ";
         }
 
-        public string ShowPlanetStoreMenu(Planet planet, Ship ship)
-        {
-            Menu.ShowBanner(planet.PlanetName, ship);
-            return $"Planet Resource = {planet.PlanetResource}\n[1] Gold: {planet.PlanetGoldCost}\n" +
-                              $"[2] Fuel: {planet.PlanetFuelCost}\n[3] Hull: {planet.PlanetHullCost}";
-        }
         
         internal Planet(string name, string resource, Difficulty difficulty, int goldCost, int fuelCost, int hullCost)
         {
@@ -66,40 +60,41 @@ namespace SpaceGame
             return ((int)Math.Round(Math.Abs(z - pz))) / 10;
         }
 
-        internal string ShowStore()
+        internal string ShowStore(Planet planet, Ship ship)
         {
-            return $"Gold is available for {PlanetGoldCost} coin\n" +
-                $"Fuel is available for {PlanetFuelCost} coin\n" +
-                $"Hull repair parts are avable for {PlanetHullCost} coin\n\n" +
-                $"Ship gold capacity upgrade costs {ShipGoldUpgrade} coin\n" +
-                $"Ship fuel capacity upgrade costs {ShipFuelUpgrade} coin\n" +
-                $"Ship hull capacity upgrade costs {ShipHullUpgrade} coin";
+            Menu.ShowBanner(planet.PlanetName, ship);
+            return $"[1] Gold is available for {planet.PlanetGoldCost} coin\n" +
+                $"[2] Fuel is available for {planet.PlanetFuelCost} coin\n" +
+                $"[3] Hull repair parts are avable for {planet.PlanetHullCost} coin\n\n" +
+                $"[4] Ship gold capacity upgrade costs {ShipGoldUpgrade} coin\n" +
+                $"[5] Ship fuel capacity upgrade costs {ShipFuelUpgrade} coin\n" +
+                $"[6] Ship hull capacity upgrade costs {ShipHullUpgrade} coin";
         }
 
-        internal string Sell(string switchCase, int amount, Ship ship)
+        internal string Sell(string switchCase, int amount, Ship ship, Planet planet)
         {
             switch (switchCase.ToLower())
             {
                 case "gold":
                     if (amount > ship.Gold) amount = ship.Gold;
-                    ship.Coins += amount * PlanetGoldCost / PlanetDifficulty;
+                    ship.Coins += amount * planet.PlanetGoldCost / planet.PlanetDifficulty;
                     ship.Gold -= amount;
                     break;
                 case "fuel":
                     if (amount > ship.Fuel) amount = ship.Fuel;
-                    ship.Coins = amount * PlanetFuelCost / PlanetDifficulty;
+                    ship.Coins = amount * planet.PlanetFuelCost / planet.PlanetDifficulty;
                     ship.Fuel -= amount;
                     break;
                 case "hull":
                     if (amount > ship.Hull) amount = ship.Hull;
-                    ship.Coins = amount * PlanetHullCost / PlanetDifficulty;
+                    ship.Coins = amount * planet.PlanetHullCost / planet.PlanetDifficulty;
                     ship.Hull -= amount;
                     break;
             }
             return $"You sold {amount} of {switchCase}. You now have {ship.Coins} coin.";
         }
 
-        internal string Buy(string switchCase, int amount, Ship ship)
+        internal string Buy(string switchCase, int amount, Ship ship, Planet planet)
         {
             string message = "";
             switch (switchCase.ToLower())
@@ -133,7 +128,7 @@ namespace SpaceGame
             string message = "Upgrade Completed!";
             switch (switchCase.ToLower())
             {
-                case "gold":
+                case "gold ship":
                     if (ship.GoldUpgrade)
                     {
                         message = "You already have that upgrade";
@@ -147,7 +142,7 @@ namespace SpaceGame
                         ship.GoldMax *= 2;
                     }
                     break;
-                case "fuel":
+                case "fuel ship":
                     if (ship.FuelUpgrade)
                     {
                         message = "You already have that upgrade";
@@ -161,7 +156,7 @@ namespace SpaceGame
                         ship.FuelMax *= 2;
                     }
                     break;
-                case "hull":
+                case "hull ship":
                     if (ship.HullUpgrade)
                     {
                         message = "You already have that upgrade";
@@ -179,7 +174,7 @@ namespace SpaceGame
             return message;
         }
 
-        internal string Mine(int days, Ship ship)
+        internal string Mine(int days, Ship ship, Planet planet)
         {
             //TODO mining does not collect resource
             string message = "";
@@ -192,24 +187,24 @@ namespace SpaceGame
                 string shipGold = nameof(ship.Gold).ToString().ToLower();
                 string shipFuel = nameof(ship.Fuel).ToString().ToLower();
                 string shipHull = nameof(ship.Hull).ToString().ToLower();
-                if (PlanetResource == shipGold)
+                if (planet.PlanetResource == shipGold)
                 {
                     mining = "gold";
-                    x += days * PlanetDifficulty * PlanetDifficulty;
+                    x += days * planet.PlanetDifficulty * planet.PlanetDifficulty;
                     ship.Gold += x;
                     if (ship.Gold > ship.GoldMax) z = ship.Gold - ship.GoldMax; ship.Gold -= z;
                 }
-                if (PlanetResource == shipFuel)
+                if (planet.PlanetResource == shipFuel)
                 {
                     mining = "fuel";
-                    x += days * PlanetDifficulty * PlanetDifficulty;
+                    x += days * planet.PlanetDifficulty * planet.PlanetDifficulty;
                     ship.Fuel += x;
                     if (ship.Fuel > ship.Fuel) z = ship.Fuel - ship.FuelMax; ship.Fuel -= z;
                 }
-                if (PlanetResource == shipHull)
+                if (planet.PlanetResource == shipHull)
                 {
                     mining = "hull";
-                    x += days * PlanetDifficulty * PlanetDifficulty;
+                    x += days * planet.PlanetDifficulty * planet.PlanetDifficulty;
                     ship.Hull += x;
                     if (ship.Hull > ship.HullMax) z = ship.Hull - ship.HullMax; ship.Hull -= z;
                 }
@@ -220,6 +215,6 @@ namespace SpaceGame
             return message;
         }
 
-        internal string GetNnameAndResource() => $"Planet: {PlanetName}. Natural resource: {PlanetResource}.";
+        internal string GetNameAndResource() => $"Planet: {PlanetName}. Natural resource: {PlanetResource}.";
     }
 }

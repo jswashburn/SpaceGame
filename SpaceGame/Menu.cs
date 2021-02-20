@@ -125,11 +125,27 @@ namespace SpaceGame
 
         static public string StoreBuyMenu()
         {
-            Console.WriteLine($"Select What you would like to purchase:\n[1] Gold\n[2] Fuel\n[3] Hull");
-            int choice = GetUserInput(3);
-            if (choice == 1) return "gold";
-            else if (choice == 2) return "fuel";
-            else return "hull";
+            Console.WriteLine($"Select What you would like to purchase:\n[1] Gold\n[2] Fuel\n[3] Hull" +
+                $"\n[4] Ship Gold Storage Upgrade\n[5] Ship Fuel Storage Upgrade\n[6] Ship Hull Storage Upgrade");
+            int choice = GetUserInput(6);
+            string message = "Did you make a selection?";
+            switch (choice)
+            {
+                case 1:
+                    message = "gold"; break;
+                case 2:
+                    message = "fuel"; break;
+                case 3:
+                    message = "hull"; break;
+                case 4:
+                    message = "gold ship"; break;
+                case 5:
+                    message = "fuel ship"; break;
+                case 6:
+                    message = "hull ship"; break;
+
+            }
+            return message;
         }
         static public string StoreSellMenu()
         {
@@ -137,7 +153,8 @@ namespace SpaceGame
             int choice = GetUserInput(3);
             if (choice == 1) return "gold";
             else if (choice == 2) return "fuel";
-            else return "hull";
+            else if (choice == 3) return "hull";
+            else return "Did you make a selection?";
         }
 
         static public int GetAmount(string buyOrsell)  //NOT SURE IF THIS WORKS YOLO
