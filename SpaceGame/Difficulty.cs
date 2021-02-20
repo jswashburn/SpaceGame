@@ -4,8 +4,8 @@ namespace SpaceGame
 {
     enum Difficulty
     {
-        Hard = 1,
+        Easy = 1,
         Medium,
-        Easy
+        Hard
     }
 }

@@ -34,7 +34,7 @@ namespace SpaceGame
                 $"You stop by some slot machines while shopping. You lost {goldLost} gold."
             };
 
-            return messages[new Random().Next(0, messages.Length)];
+            return messages[new Random().Next(messages.Length)];
         }
 
         protected override string GetPositiveEventMessage()
@@ -48,7 +48,7 @@ namespace SpaceGame
                 $"Your dogecoin stock has earned you {goldGained} gold!"
             };
 
-            return messages[new Random().Next(0, messages.Length)];
+            return messages[new Random().Next(messages.Length)];
         }
     }
 }

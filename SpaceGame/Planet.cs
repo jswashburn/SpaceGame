@@ -4,77 +4,217 @@ using System.Text;
 
 namespace SpaceGame
 {
+    public enum Store
+    {
+        buy = 1,
+        sell
+    }
+
+    public enum PlanetOptions
+    {
+        store = 1,
+        mine,
+        get_name_and_resources,
+        travel
+    }
+
     internal class Planet
     {
-        string PlanetName { get; set; }
-        string PlanetResource { get; set; }
+        public string PlanetName { get; private set; }
+        public string PlanetResource { get; private set; }
         int PlanetDifficulty { get; set; }
-        (int, int) PlanetCords { get; set; }
-        int PlanetGoldCost { get; set; }
-        int PlanetFuelCost { get; set; }
-        int PlanetHullCost { get; set; }
+        public (int, int) PlanetCords { get; set; }
+        public int PlanetGoldCost { get; private set; }
+        public int PlanetFuelCost { get; private set; }
+        public int PlanetHullCost { get; private set; }
+        static int ShipGoldUpgrade { get; set; }
+        static int ShipFuelUpgrade { get; set; }
+        static int ShipHullUpgrade { get; set; }
 
+        public string ShowPlanetMenu(Planet planet)
+        {
+            return $"Planet: {PlanetName}. Natural resource: {PlanetResource}.\n[1] Store\n[2] Mine\n[3] Travel ";
+        }
+
+        
         internal Planet(string name, string resource, Difficulty difficulty, int goldCost, int fuelCost, int hullCost)
         {
             Random r = new Random();
             this.PlanetName = name;
             this.PlanetResource = resource;
             this.PlanetDifficulty = (int)difficulty++;
-            this.PlanetCords = (r.Next(1, 101), r.Next(1, 101));
+            this.PlanetCords = (r.Next(1, 251), r.Next(1, 251));
             this.PlanetGoldCost = goldCost;
             this.PlanetFuelCost = fuelCost;
             this.PlanetHullCost = hullCost;
-        }
-        internal int DistanceToShip(int x, int y) //returns difference of caller and current planet
-        {
-            double z = Math.Sqrt((x * x) + (y * y));
-            (int px, int py) = PlanetCords;
-            double pz = Math.Sqrt((px * px) + (py * py));
-            return (int)Math.Round(Math.Abs(z - pz));
-        }
-        internal string ShowStore()
-        {
-            return $"Gold is available for {PlanetGoldCost} coin\nFuel is available for {PlanetFuelCost} coin\nHull repair parts are avable for {PlanetHullCost} coin";
+            ShipGoldUpgrade = 1200 / (int)difficulty;
+            ShipFuelUpgrade = 3000 / (int)difficulty;
+            ShipHullUpgrade = 3000 / (int)difficulty;
         }
 
-        internal int Sell(string switchCase, int amount)
+        internal int DistanceToShip(int x, int y, Planet CurrentPlanet) //returns difference of caller and current planet
         {
-            int coin = 0;
+            double z = Math.Sqrt((x * x) + (y * y));
+            (int px, int py) = CurrentPlanet.PlanetCords;
+            double pz = Math.Sqrt((px * px) + (py * py));
+            return ((int)Math.Round(Math.Abs(z - pz))) / 10;
+        }
+
+        internal string ShowStore(Planet planet, Ship ship)
+        {
+            Menu.ShowBanner(planet.PlanetName, ship);
+            return $"[1] Gold is available for {planet.PlanetGoldCost} coin\n" +
+                $"[2] Fuel is available for {planet.PlanetFuelCost} coin\n" +
+                $"[3] Hull repair parts are avable for {planet.PlanetHullCost} coin\n\n" +
+                $"[4] Ship gold capacity upgrade costs {ShipGoldUpgrade} coin\n" +
+                $"[5] Ship fuel capacity upgrade costs {ShipFuelUpgrade} coin\n" +
+                $"[6] Ship hull capacity upgrade costs {ShipHullUpgrade} coin";
+        }
+
+        internal string Sell(string switchCase, int amount, Ship ship, Planet planet)
+        {
             switch (switchCase.ToLower())
             {
                 case "gold":
-                    coin = amount * PlanetGoldCost / PlanetDifficulty;
+                    if (amount > ship.Gold) amount = ship.Gold;
+                    ship.Coins += amount * planet.PlanetGoldCost / planet.PlanetDifficulty;
+                    ship.Gold -= amount;
                     break;
                 case "fuel":
-                    coin = amount * PlanetFuelCost / PlanetDifficulty;
+                    if (amount > ship.Fuel) amount = ship.Fuel;
+                    ship.Coins = amount * planet.PlanetFuelCost / planet.PlanetDifficulty;
+                    ship.Fuel -= amount;
                     break;
                 case "hull":
-                    coin = amount * PlanetHullCost / PlanetDifficulty;
+                    if (amount > ship.Hull) amount = ship.Hull;
+                    ship.Coins = amount * planet.PlanetHullCost / planet.PlanetDifficulty;
+                    ship.Hull -= amount;
                     break;
             }
-            return coin;
+            return $"You sold {amount} of {switchCase}. You now have {ship.Coins} coin.";
         }
-        internal int Buy(string switchCase, int amount)
+
+        internal string Buy(string switchCase, int amount, Ship ship, Planet planet)
         {
-            int item = 0;
+            string message = "";
             switch (switchCase.ToLower())
             {
                 case "gold":
-                    item = amount * PlanetGoldCost;
+                    if (amount + ship.Gold > ship.GoldMax) amount = ship.GoldMax - ship.Gold;
+                    if (amount * PlanetGoldCost > ship.Coins) amount = ship.Coins / PlanetGoldCost;
+                    ship.Gold += amount;
+                    ship.Coins -= amount * PlanetGoldCost;
+                    message = $"You  bought {amount} gold. You have {ship.Coins} coin left.";
                     break;
                 case "fuel":
-                    item = amount * PlanetFuelCost;
+                    if (amount + ship.Fuel > ship.FuelMax) amount = ship.FuelMax - ship.Fuel;
+                    if (amount * PlanetFuelCost > ship.Coins) amount = ship.Coins / PlanetFuelCost;
+                    ship.Fuel += amount;
+                    ship.Coins -= amount * PlanetFuelCost;
+                    message = $"You  bought {amount} Fuel. You have {ship.Coins} coin left.";
                     break;
                 case "hull":
-                    item = amount * PlanetHullCost;
+                    if (amount + ship.Hull > ship.HullMax) amount = ship.HullMax - ship.Hull;
+                    if (amount * PlanetHullCost > ship.Coins) amount = ship.Coins / PlanetHullCost;
+                    ship.Hull += amount;
+                    ship.Coins -= amount * PlanetHullCost;
+                    message = $"You  bought {amount} hull material. You have {ship.Coins} coin left.";
                     break;
             }
-            return item;
+            return message;
         }
-        internal int Mine(int days)
+        internal static string UpgradeShip(string switchCase, Ship ship)
         {
-            return days *= PlanetDifficulty * PlanetDifficulty;
+            string message = "Upgrade Completed!";
+            switch (switchCase.ToLower())
+            {
+                case "gold ship":
+                    if (ship.GoldUpgrade)
+                    {
+                        message = "You already have that upgrade";
+                        break;
+                    }
+                    if (ship.Coins < ShipGoldUpgrade) message = "You can't afford this upgrade.";
+                    else
+                    {
+                        ship.Coins -= ShipGoldUpgrade;
+                        ship.GoldUpgrade = true;
+                        ship.GoldMax *= 2;
+                    }
+                    break;
+                case "fuel ship":
+                    if (ship.FuelUpgrade)
+                    {
+                        message = "You already have that upgrade";
+                        break;
+                    }
+                    if (ship.Coins < ShipFuelUpgrade) message = "You can't afford this upgrade.";
+                    else
+                    {
+                        ship.Coins -= ShipFuelUpgrade;
+                        ship.FuelUpgrade = true;
+                        ship.FuelMax *= 2;
+                    }
+                    break;
+                case "hull ship":
+                    if (ship.HullUpgrade)
+                    {
+                        message = "You already have that upgrade";
+                        break;
+                    }
+                    if (ship.Coins < ShipHullUpgrade) message = "You can't afford this upgrade.";
+                    else
+                    {
+                        ship.Coins -= ShipHullUpgrade;
+                        ship.HullUpgrade = true;
+                        ship.HullMax *= 2;
+                    }
+                    break;
+            }
+            return message;
         }
-        internal (string, string) GetNnameAndResource() => (PlanetName, PlanetResource);
+
+        internal string Mine(int days, Ship ship, Planet planet)
+        {
+            //TODO mining does not collect resource
+            string message = "";
+            if (days > ship.Time) message = "You can't mine this long or Earth will perish!";
+            else
+            {
+                int x = 0;
+                int z = 0;
+                string mining = "";
+                string shipGold = nameof(ship.Gold).ToString().ToLower();
+                string shipFuel = nameof(ship.Fuel).ToString().ToLower();
+                string shipHull = nameof(ship.Hull).ToString().ToLower();
+                if (planet.PlanetResource == shipGold)
+                {
+                    mining = "gold";
+                    x += days * planet.PlanetDifficulty * planet.PlanetDifficulty;
+                    ship.Gold += x;
+                    if (ship.Gold > ship.GoldMax) z = ship.Gold - ship.GoldMax; ship.Gold -= z;
+                }
+                if (planet.PlanetResource == shipFuel)
+                {
+                    mining = "fuel";
+                    x += days * planet.PlanetDifficulty * planet.PlanetDifficulty;
+                    ship.Fuel += x;
+                    if (ship.Fuel > ship.Fuel) z = ship.Fuel - ship.FuelMax; ship.Fuel -= z;
+                }
+                if (planet.PlanetResource == shipHull)
+                {
+                    mining = "hull";
+                    x += days * planet.PlanetDifficulty * planet.PlanetDifficulty;
+                    ship.Hull += x;
+                    if (ship.Hull > ship.HullMax) z = ship.Hull - ship.HullMax; ship.Hull -= z;
+                }
+                ship.Time -= days;
+                if (z == 0) message = $"You mined {x} {mining}. This cost you {days} days";
+                else message = $"You mined {x} {mining} but had to leave {z} behind because you ran out of space. This cost you {days} days";
+            }
+            return message;
+        }
+
+        internal string GetNameAndResource() => $"Planet: {PlanetName}. Natural resource: {PlanetResource}.";
     }
 }

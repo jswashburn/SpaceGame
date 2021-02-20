@@ -34,7 +34,7 @@ namespace SpaceGame
                 $"A fuel leak you failed to identify during last weeks pm's has cost you {fuelLost} fuel."
             };
 
-            return fuelMessages[new Random().Next(0, fuelMessages.Length)];
+            return fuelMessages[new Random().Next(fuelMessages.Length)];
         }
 
         protected override string GetPositiveEventMessage()
@@ -47,7 +47,7 @@ namespace SpaceGame
                 $"Your dark matter harvester has returned you {fuelGained} fuel."
             };
 
-            return fuelMessages[new Random().Next(0, fuelMessages.Length)];
+            return fuelMessages[new Random().Next(fuelMessages.Length)];
         }
     }
 }

@@ -25,7 +25,7 @@ namespace SpaceGame
                 "Why did the cow go in the spaceship? It wanted to see the mooooooooon."
             };
 
-            return easterEggMessages[new Random().Next(0, easterEggMessages.Length)];
+            return easterEggMessages[new Random().Next(easterEggMessages.Length)];
         }
 
         protected override string GetPositiveEventMessage()
@@ -35,7 +35,7 @@ namespace SpaceGame
                 "Why did people not like the restaurant on the moon? Because there was no atmosphere."
             };
 
-            return easterEggMessages[new Random().Next(0, easterEggMessages.Length)];
+            return easterEggMessages[new Random().Next(easterEggMessages.Length)];
         }
     }
 }
