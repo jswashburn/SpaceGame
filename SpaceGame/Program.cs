@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Threading;
 
-
 namespace SpaceGame
 {
     class Program
     {
-
-
         static void Main(string[] args)
         {
             #region PseudoCode
@@ -22,7 +19,6 @@ namespace SpaceGame
                 // initialize ship
                 // show game setting/start scenario
                 // while (!GameOver(checks fuel, hull, etc))
-                //TODO maksim static gameover method()
                 //ShowPlanetOptions() "mine, store, sell, buy, getN&R, travel"
                 //Get user input
                 //if user input == store
@@ -87,11 +83,13 @@ namespace SpaceGame
                 // initialize ship
                 Ship ship = new Ship(difficulty);
                 Planet StartingPlanet = planetArray[rng.Next(5)]; //gets random starting planet
+
                 // show game setting/start scenario
                 Utility.ShowSetting(StartingPlanet, ship.Time);
                 Console.WriteLine("\nPress any key to contine");
                 Console.ReadKey();
                 Planet CurrentPlanet = StartingPlanet;
+
                 // while (!GameOver(checks fuel, hull, etc))
                 while (!CheckGameOver(ship))
                 {
@@ -104,10 +102,8 @@ namespace SpaceGame
                     if (userInput == (int)PlanetOptions.store)
                     {
                         //ShowStore
-                        //TODO buy and sell opt dont show
-                        //TODO buy and sell text is backwards in some of the statements
                         Console.WriteLine(CurrentPlanet.ShowStore(CurrentPlanet, ship));
-                        Console.WriteLine("Select the material you would like to buy or sell: ");
+                        Console.WriteLine("Select [1] to buy or [2] to sell: ");
                         //int selection = Menu.GetUserInput(3);
                         //if (selection == 1)
 
@@ -115,15 +111,24 @@ namespace SpaceGame
                         if (userInput == (int)Store.buy) //input == 1
                         {
                             //get string of material, get amount they want(int)
-                            string material = Menu.StoreBuyMenu();
-                            int amount = Menu.GetAmount("buy"); //"how much would you like to BUY"
-                            Console.WriteLine(CurrentPlanet.Buy(material, amount, ship, CurrentPlanet));//returns string
-                            Console.WriteLine(goldEvent.Trigger(ship)); // returns string
-                            Console.ReadLine();
+                            string material = Menu.StoreBuyMenu(CurrentPlanet, ship);
+                            if (material == "gold" || material == "fuel" || material == "hull")
+                            {
+                                int amount = Menu.GetAmount("buy"); //"how much would you like to BUY"
+                                Console.WriteLine(CurrentPlanet.Buy(material, amount, ship, CurrentPlanet));//returns string
+                                Console.WriteLine(goldEvent.Trigger(ship)); // returns string
+                                Console.ReadLine();
+                            }
+                            else
+                            {
+                                Console.WriteLine(Planet.UpgradeShip(material, ship));
+                                Console.WriteLine(goldEvent.Trigger(ship));
+                                Console.ReadLine();
+                            }
                         }
                         else if (userInput == (int)Store.sell) //input == 2
                         {
-                            string material = Menu.StoreSellMenu();
+                            string material = Menu.StoreSellMenu(CurrentPlanet, ship);
                             int amount = Menu.GetAmount("sell"); //"how much would you like to SELL"
                             Console.WriteLine(CurrentPlanet.Sell(material, amount, ship, CurrentPlanet));
                             Console.WriteLine(goldEvent.Trigger(ship));
@@ -143,12 +148,7 @@ namespace SpaceGame
                         Console.WriteLine("Press any key to continue");
                         Console.ReadKey();
                     }
-                    else if (userInput == (int)PlanetOptions.get_name_and_resources)
-                    {
-                        Console.WriteLine(CurrentPlanet.GetNameAndResource()); //GetNameResources()
-                        Console.WriteLine("Press any key to continue");
-                        Console.ReadKey();
-                    }
+
                     else if (userInput == (int)PlanetOptions.travel)
                     {
                         Console.WriteLine($"Current Planet: {CurrentPlanet.PlanetName}");
@@ -168,18 +168,24 @@ namespace SpaceGame
                             }
                         }
                         Console.WriteLine($"[{planetArray.Length}] Planet: Earth");
+                        Console.WriteLine($"[{planetArray.Length + 1}] Return to Store");
 
                         //get user input
                         bool ZeroIndex = true;
-                        userInput = Menu.GetUserInput(planetArray.Length, ZeroIndex);
+                        userInput = Menu.GetUserInput(planetArray.Length + 1, ZeroIndex);
                         if (userInput == planetArray.Length)//user selects earth, the last planet in the options
                         {
                             if (TravelToEarth(ship) == false) //means that not all upgrades are complete
                             {
                                 Console.WriteLine(
-                                    "Sorry but your ship will not make the journey, select a different planet");
+                                    "\nSorry but your ship will not make the journey, select a different planet\nPress any key to continue...");
+                                Console.ReadLine();
                             }
                             //else//game == win
+                        }
+                        else if (userInput == planetArray.Length + 1)
+                        {
+                            //blank and returns to store
                         }
                         else
                         {
@@ -192,16 +198,14 @@ namespace SpaceGame
                             //gets number of days travel it takes to get to destination planet
                             //change planet, subtract days, run random event, shipX ShipY = PlanetX PlanetY
                             CurrentPlanet = planetArray[userInput];
-                            ship.Time = ship.Time - distanceToPlanet;
+                            ship.Time -= distanceToPlanet;
                             //TODO change ship coordinates
                             Console.Clear();
                             timeEvent.Trigger(ship);
                             hullEvent.Trigger(ship);
                         }
-
-
                     }
-
+                    else { Console.WriteLine("Enter something valid. Press any key to continue..."); Console.ReadLine(); }
                 }
             }
             else if (mMenuOpt == 2) // LOAD GAME
@@ -214,23 +218,22 @@ namespace SpaceGame
                 Thread.Sleep(2000);
                 Environment.Exit(1);
             }
-
-
-            static bool CheckGameOver(Ship ship)
-            {
-                if (ship.Hull <= 0)
-                    return true;
-                if (ship.Time <= 0)
-                    return true;
-                else return false;
-            }
-            static bool TravelToEarth(Ship ship)
-            {
-                if (ship.HullUpgrade && ship.FuelUpgrade && ship.Fuel == ship.FuelMax && ship.Hull == ship.HullMax)
-                    return true;
-                else return false;
-            }
         }
 
+        static bool CheckGameOver(Ship ship)
+        {
+            if (ship.Hull <= 0)
+                return true;
+            if (ship.Time <= 0)
+                return true;
+            else return false;
+        }
+
+        static bool TravelToEarth(Ship ship)
+        {
+            if (ship.HullUpgrade && ship.FuelUpgrade && ship.Fuel == ship.FuelMax && ship.Hull == ship.HullMax)
+                return true;
+            else return false;
+        }
     }
 }
