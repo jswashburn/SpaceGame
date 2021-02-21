@@ -7,7 +7,8 @@ namespace SpaceGame
     public enum Store
     {
         buy = 1,
-        sell
+        sell,
+        cancel
     }
 
     public enum PlanetOptions
@@ -125,6 +126,7 @@ namespace SpaceGame
                     message = $"You  bought {amount} hull material. You have {ship.Coins} coin left.";
                     break;
             }
+            if (amount == 0) message = "You don't have space for that";
             return message;
         }
         internal static string UpgradeShip(string switchCase, Ship ship)
@@ -175,7 +177,7 @@ namespace SpaceGame
                     }
                     break;
             }
-            return message;
+            return message + "\nPress enter to continue...";
         }
 
         internal string Mine(int days, Ship ship, Planet planet)
