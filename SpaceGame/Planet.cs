@@ -22,13 +22,13 @@ namespace SpaceGame
 
     internal class Planet
     {
-        public string PlanetName { get; private set; }
-        public string PlanetResource { get; private set; }
-        int PlanetDifficulty { get; set; }
+        public string PlanetName { get; set; }
+        public string PlanetResource { get; set; }
+        public int PlanetDifficulty { get; set; }
         public (int, int) PlanetCords { get; set; }
-        public int PlanetGoldCost { get; private set; }
-        public int PlanetFuelCost { get; private set; }
-        public int PlanetHullCost { get; private set; }
+        public int PlanetGoldCost { get; set; }
+        public int PlanetFuelCost { get; set; }
+        public int PlanetHullCost { get; set; }
         public static int ShipGoldUpgrade { get; set; }
         public static int ShipFuelUpgrade { get; set; }
         public static int ShipHullUpgrade { get; set; }

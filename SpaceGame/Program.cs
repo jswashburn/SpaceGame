@@ -116,6 +116,7 @@ namespace SpaceGame
                 HullEvent hullEvent = new HullEvent(difficulty);
                 TimeEvent timeEvent = new TimeEvent(difficulty);
                 EasterEggEvent easterEgg = new EasterEggEvent(difficulty);
+                
                 Planet[] planetArray = new Planet[planetList.Count];
                 for (int i = 0; i < planetList.Count; i++)
                 {
