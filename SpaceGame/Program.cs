@@ -103,11 +103,11 @@ namespace SpaceGame
                     {
                         //ShowStore
                         Console.WriteLine(CurrentPlanet.ShowStore(CurrentPlanet, ship));
-                        Console.WriteLine("Select [1] to buy or [2] to sell: ");
+                        Console.WriteLine("Select [1] to buy, [2] to sell or [3] to cancel: ");
                         //int selection = Menu.GetUserInput(3);
                         //if (selection == 1)
 
-                        userInput = Menu.GetUserInput(2);
+                        userInput = Menu.GetUserInput(3);
                         if (userInput == (int)Store.buy) //input == 1
                         {
                             //get string of material, get amount they want(int)
@@ -134,15 +134,17 @@ namespace SpaceGame
                             Console.WriteLine(goldEvent.Trigger(ship));
                             Console.ReadLine();
                         }
-                        else //return user to previous menu
+                        else if (userInput == (int)Store.cancel) //return user to previous menu
                         {
                             Console.WriteLine("Returning to planet menu...");
                             Thread.Sleep(2000);
                         }
+                        else Console.WriteLine("What kind of input was that??");
                     }
                     else if (userInput == (int)PlanetOptions.mine)
                     {
-                        Console.WriteLine("How many days");
+                        Menu.ShowBanner(CurrentPlanet.PlanetName, ship);
+                        Console.WriteLine("How many days would you like to mine for?");
                         int NumDaysToMine = Menu.GetUserInput(ship.Time); //do error checking
                         Console.WriteLine(CurrentPlanet.Mine(NumDaysToMine, ship, CurrentPlanet));
                         Console.WriteLine("Press any key to continue");
@@ -159,10 +161,7 @@ namespace SpaceGame
                             if (planet != CurrentPlanet)
                             {
                                 //Show each planet natural resource and name
-                                Console.WriteLine($"[{Array.IndexOf(planetArray, planet)}] Planet: {planet.PlanetName} " +
-                                                  $"\tGold: {planet.PlanetGoldCost}" +
-                                                  $"\tFuel: {planet.PlanetFuelCost}" +
-                                                  $"\tHull: {planet.PlanetHullCost}");
+                                Console.WriteLine($"[{Array.IndexOf(planetArray, planet)}] {planet.GetNameAndResource()}");
                                 //show DistanceToShip(shipX, shipY) = distance in days to planet
                                 Console.WriteLine($"Distance from ship in days: {planet.DistanceToShip(planet.PlanetCords.Item1, planet.PlanetCords.Item2, CurrentPlanet)}");
                             }
