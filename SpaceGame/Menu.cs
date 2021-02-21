@@ -57,13 +57,19 @@ namespace SpaceGame
             message = message.PadLeft(center, '-').PadRight(frameSize, '-');
             Console.WriteLine(message);
 
+            string coin = $"Coin: {ship.Coins}";
             string gold = $"Gold: {ship.Gold}/{ship.GoldMax}";
             string time = $"Time: {ship.Time}";
             string fuel = $"Fuel: {ship.Fuel}/{ship.FuelMax}";
+            string hull = $"Hull: {ship.Hull}/{ship.HullMax}";
+            Console.SetCursorPosition(Console.WindowWidth - 15, Console.CursorTop + 1);
+            Console.Write(coin);
             Console.SetCursorPosition(Console.WindowWidth - 15, Console.CursorTop + 1);//Moves cursor up one line and to right edge of console
             Console.Write(gold);
             Console.SetCursorPosition(Console.WindowWidth - 15, Console.CursorTop + 1);
             Console.Write(fuel);
+            Console.SetCursorPosition(Console.WindowWidth - 15, Console.CursorTop + 1);
+            Console.Write(hull);
             Console.SetCursorPosition(Console.WindowWidth - 15, Console.CursorTop + 1);
             Console.Write(time);
             Console.SetCursorPosition(0, Console.CursorTop - 3);
@@ -123,10 +129,16 @@ namespace SpaceGame
             return selection;
         }
 
-        static public string StoreBuyMenu()
+        static public string StoreBuyMenu(Planet planet, Ship ship)
         {
-            Console.WriteLine($"Select What you would like to purchase:\n[1] Gold\n[2] Fuel\n[3] Hull" +
-                $"\n[4] Ship Gold Storage Upgrade\n[5] Ship Fuel Storage Upgrade\n[6] Ship Hull Storage Upgrade");
+            Console.Clear();
+            Menu.ShowBanner(planet.PlanetName, ship);
+            Console.WriteLine($"[1] Gold is available for {planet.PlanetGoldCost} coin\n" +
+                $"[2] Fuel is available for {planet.PlanetFuelCost} coin\n" +
+                $"[3] Hull repair parts are avable for {planet.PlanetHullCost} coin\n" +
+                $"[4] Ship gold capacity upgrade costs {Planet.ShipGoldUpgrade} coin\n" +
+                $"[5] Ship fuel capacity upgrade costs {Planet.ShipFuelUpgrade} coin\n" +
+                $"[6] Ship hull capacity upgrade costs {Planet.ShipHullUpgrade} coin\n\n");
             int choice = GetUserInput(6);
             string message = "Did you make a selection?";
             switch (choice)
@@ -147,8 +159,10 @@ namespace SpaceGame
             }
             return message;
         }
-        static public string StoreSellMenu()
+        static public string StoreSellMenu(Planet planet, Ship ship)
         {
+            Console.Clear();
+            Menu.ShowBanner(planet.PlanetName, ship);
             Console.WriteLine($"Select What you would like to Sell:\n[1] Gold\n[2] Fuel\n[3] Hull");
             int choice = GetUserInput(3);
             if (choice == 1) return "gold";
