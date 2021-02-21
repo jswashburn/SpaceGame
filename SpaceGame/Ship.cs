@@ -17,7 +17,7 @@
         public Ship(Difficulty difficulty)
         {
             Time = 500 * (int)difficulty;  //days
-            Coins = 1000 / (int)difficulty;
+            Coins = 100000 / (int)difficulty;
             Fuel = 1000 / (int)difficulty;
             Gold = 100;
             Hull = 1000 / (int)difficulty;
