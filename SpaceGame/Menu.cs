@@ -132,10 +132,11 @@ namespace SpaceGame
         static public string StoreBuyMenu(Planet planet, Ship ship)
         {
             Console.Clear();
+
             Menu.ShowBanner(planet.PlanetName, ship);
             Console.WriteLine($"[1] Gold is available for {planet.PlanetGoldCost} coin\n" +
                 $"[2] Fuel is available for {planet.PlanetFuelCost} coin\n" +
-                $"[3] Hull repair parts are avable for {planet.PlanetHullCost} coin\n" +
+                $"[3] Hull repair parts are available for {planet.PlanetHullCost} coin\n" +
                 $"[4] Ship gold capacity upgrade costs {Planet.ShipGoldUpgrade} coin\n" +
                 $"[5] Ship fuel capacity upgrade costs {Planet.ShipFuelUpgrade} coin\n" +
                 $"[6] Ship hull capacity upgrade costs {Planet.ShipHullUpgrade} coin\n\n");
