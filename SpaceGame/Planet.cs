@@ -16,7 +16,8 @@ namespace SpaceGame
         store = 1,
         mine,
         travel,
-        returnToStore,
+        save,
+        quit
     }
 
     internal class Planet
@@ -34,9 +35,10 @@ namespace SpaceGame
 
         public string ShowPlanetMenu(Planet planet)
         {
-            return $"Planet: {PlanetName}. Natural resource: {PlanetResource}.\n[1] Store\n[2] Mine\n[3] Travel ";
+            return $"Planet: {PlanetName}. Natural resource available to mine: {PlanetResource}.\n[1] Store\n[2] Mine\n[3] Travel\n[4] Save Game\n[5] Quit";
         }
 
+        internal Planet() { }
         
         internal Planet(string name, string resource, Difficulty difficulty, int goldCost, int fuelCost, int hullCost)
         {
@@ -183,7 +185,7 @@ namespace SpaceGame
         internal string Mine(int days, Ship ship, Planet planet)
         {
             string message = "";
-            if (days > ship.Time) message = "You can't mine this long or Earth will perish!";
+            if (days >= ship.Time) message = "You can't mine this long or Earth will perish!";
             else
             {
                 int x = 0;
@@ -215,7 +217,7 @@ namespace SpaceGame
                 }
                 ship.Time -= days;
                 if (z == 0) message = $"You mined {x} {mining}. This cost you {days} days";
-                else message = $"You mined {x} {mining} but had to leave {z} behind because you ran out of space. This cost you {days} days";
+                else message = $"You mined {x} {mining} but had to leave {z} behind because you do not have enough space. This cost you {days} days";
             }
             return message;
         }

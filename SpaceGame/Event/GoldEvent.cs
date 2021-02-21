@@ -8,7 +8,6 @@ namespace SpaceGame
         int goldLost => new Random().Next(difficulty / 3, difficulty * 2);
         int goldGained => new Random().Next(difficulty, difficulty * 2);
 
-        // Use the base class constructor
         public GoldEvent(Difficulty difficulty) : base(difficulty) { }
 
         protected override string NegativeEvent(Ship ship)
@@ -20,6 +19,9 @@ namespace SpaceGame
         protected override string PositiveEvent(Ship ship)
         {
             ship.Coins += goldGained;
+            if (ship.Coins > ship.GoldMax)
+                ship.Coins = ship.GoldMax;
+
             return GetPositiveEventMessage();
         }
 

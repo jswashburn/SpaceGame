@@ -8,7 +8,6 @@ namespace SpaceGame
         int hullLost => new Random().Next(difficulty / 3, difficulty * 2);
         int hullGained => new Random().Next(difficulty, difficulty * 2);
 
-        // Use the base class constructor
         public HullEvent(Difficulty difficulty) : base(difficulty) { }
 
         protected override string NegativeEvent(Ship ship)
@@ -20,6 +19,9 @@ namespace SpaceGame
         protected override string PositiveEvent(Ship ship)
         {
             ship.Hull += hullGained;
+            if (ship.Hull > ship.HullMax)
+                ship.Hull = ship.HullMax;
+
             return GetPositiveEventMessage();
         }
 

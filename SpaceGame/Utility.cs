@@ -6,17 +6,6 @@ namespace SpaceGame
 {
     class Utility
     {
-        public void ShowDistanceFromPlanets()
-        {
-            //foreach (Planet planet in planetList)
-            //{
-            //    double distance = Math.Sqrt(Math.Pow(Math.Abs(currentXPosition - planet.XPosition), 2) +
-            //        Math.Pow(Math.Abs(currentYPosition - planet.YPosition), 2));
-
-            //    Console.WriteLine($"Distance to {planet.Name} is {distance}");
-            //}
-        }
-
         static public Difficulty PromptUserForDifficulty()
         {
             Console.WriteLine("Select Difficulty: \n[1] Easy\n[2] Medium\n[3] Hard");

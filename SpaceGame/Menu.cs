@@ -8,18 +8,9 @@ namespace SpaceGame
 {
     class Menu
     {
-        public string Name { get; set; } = null;
-
-        public Difficulty difficultyLevel = Difficulty.Easy;  // default difficulty of easy+
-
-        private List<string> MainMenuOptions = new List<string>() { "New Game", "Load Game", "Quit" };
-
-        private List<string> ResourceOptons = new List<string>()
-            {"Dark Mater", "Gold", "Hull Integrity", "Resource Capacity"};
-
-
         public void ShowMainMenu(int length = 50)
         {
+            Console.ForegroundColor = ConsoleColor.White;
             string message = "Main Menu";
             int frameSize = length;
             int center = ((frameSize / 2) + (message.Length / 2));
@@ -28,30 +19,9 @@ namespace SpaceGame
             Console.WriteLine("[1] New Game\n[2] Load Game\n[3] Quit");
         }
 
-        //private void ShowOptions(List<string> options, int? index = null)
-        //// Ex; (MenuOptions, null) => option1 \n option2 OR (MenuOptions, 1) => [1] Option1 \n [2] Option2
-        //{
-        //    if (index != null)
-        //    {
-        //        int x = 1;
-        //        foreach (string option in options)
-        //        {
-        //            Console.WriteLine($"[{x.ToString()}] {option}");
-        //            x++;
-        //        }
-
-        //    }
-        //    else
-        //    {
-        //        foreach (string option in options)
-        //        {
-        //            Console.WriteLine($"{option}");
-        //        }
-        //    }
-        //}
-
         static public void ShowBanner(string message, Ship ship, int length = 50)
         {
+            
             int frameSize = length;
             int center = ((frameSize / 2) + (message.Length / 2));
             message = message.PadLeft(center, '-').PadRight(frameSize, '-');
@@ -59,7 +29,7 @@ namespace SpaceGame
 
             string coin = $"Coin: {ship.Coins}";
             string gold = $"Gold: {ship.Gold}/{ship.GoldMax}";
-            string time = $"Time: {ship.Time}";
+            string time = $"Days left: {ship.Time}";
             string fuel = $"Fuel: {ship.Fuel}/{ship.FuelMax}";
             string hull = $"Hull: {ship.Hull}/{ship.HullMax}";
             Console.SetCursorPosition(Console.WindowWidth - 15, Console.CursorTop + 1);
@@ -72,13 +42,8 @@ namespace SpaceGame
             Console.Write(hull);
             Console.SetCursorPosition(Console.WindowWidth - 15, Console.CursorTop + 1);
             Console.Write(time);
-            Console.SetCursorPosition(0, Console.CursorTop - 3);
+            Console.SetCursorPosition(0, Console.CursorTop - 5);
 
-        }
-
-        private void ShowSeparator(char x, int length)
-        {
-            Console.WriteLine("".PadRight(length, x));
         }
 
         public static int GetUserInput(int menuLength, bool ZeroIndex = false)
@@ -86,7 +51,7 @@ namespace SpaceGame
             Console.WriteLine("Enter your selection");
             string input = Console.ReadLine();
             Console.SetCursorPosition(0, Console.CursorTop - 1);//Moves cursor up one line
-            Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");//Clears current line
+            Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r");//Clears current line
             int selection;
             while (true)
             {
@@ -94,31 +59,31 @@ namespace SpaceGame
                 {
                     Console.WriteLine("Please enter a valid number: ");//writes and makes new line
                     input = Console.ReadLine(); //writes on same line as above and then makes new line
-                    Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");//Clears current line
+                    Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r");//Clears current line
                     Console.SetCursorPosition(0, Console.CursorTop - 1);//Moves cursor up one line
-                    Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");//Clears current line
+                    Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r");//Clears current line
                     Console.SetCursorPosition(0, Console.CursorTop - 1);//Moves cursor up one line
-                    Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");//Clears current line
+                    Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r");//Clears current line
                 }
                 else if (ZeroIndex == false && (j > menuLength || j <= 0))
                 {
                     Console.WriteLine("Number is not in menu range");
                     input = Console.ReadLine(); //writes on same line as above and then makes new line
-                    Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r"); //Clears current line
+                    Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r"); //Clears current line
                     Console.SetCursorPosition(0, Console.CursorTop - 1); //Moves cursor up one line
-                    Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r"); //Clears current line
+                    Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r"); //Clears current line
                     Console.SetCursorPosition(0, Console.CursorTop - 1); //Moves cursor up one line
-                    Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r"); //Clears current line
+                    Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r"); //Clears current line
                 }
                 else if (j > menuLength || j < 0)
                 {
                     Console.WriteLine("Number is not in menu range");
                     input = Console.ReadLine(); //writes on same line as above and then makes new line
-                    Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r"); //Clears current line
+                    Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r"); //Clears current line
                     Console.SetCursorPosition(0, Console.CursorTop - 1); //Moves cursor up one line
-                    Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r"); //Clears current line
+                    Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r"); //Clears current line
                     Console.SetCursorPosition(0, Console.CursorTop - 1); //Moves cursor up one line
-                    Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r"); //Clears current line
+                    Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r"); //Clears current line
                 }
                 else
                 {
@@ -141,7 +106,7 @@ namespace SpaceGame
                 $"[5] Ship fuel capacity upgrade costs {Planet.ShipFuelUpgrade} coin\n" +
                 $"[6] Ship hull capacity upgrade costs {Planet.ShipHullUpgrade} coin\n" +
                 $"[7] Cancel\n\n");
-            int choice = GetUserInput(6);
+            int choice = GetUserInput(7);
             string message = "Did you make a selection?";
             switch (choice)
             {
@@ -184,10 +149,10 @@ namespace SpaceGame
             while (!Int32.TryParse(input, out j))
             {
                 Console.WriteLine("Please enter a valid number");
-                Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
+                Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r");
                 input = Console.ReadLine();
                 Console.SetCursorPosition(0, Console.CursorTop - 2);
-                Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
+                Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r");
             }
             return j;
 
@@ -200,7 +165,7 @@ namespace SpaceGame
                 Console.Write(".", i);
                 Thread.Sleep(1000);
             }
-            Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
+            Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r");
 
         }
 
