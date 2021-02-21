@@ -51,12 +51,11 @@ namespace SpaceGame
             //show main menu (jason)
             Menu menu = new Menu();
             menu.ShowMainMenu();
-            int mMenuOpt = Menu.GetUserInput(3);
+            int MenuOpt = Menu.GetUserInput(3);
             Console.Clear();
 
-            if (mMenuOpt == 1) // NEW GAME, GET USERNAME, get difficulty
+            if (MenuOpt == 1) // NEW GAME, GET USERNAME, get difficulty
             {
-                // difficulty (jason TODO)
                 Difficulty difficulty = Utility.PromptUserForDifficulty(); //this will be default
                 Console.Clear();
 
@@ -68,7 +67,6 @@ namespace SpaceGame
                 Planet p5 = new Planet("Cybertron", "Hull Material", difficulty, 100, 200, 15);
                 Planet[] planetArray = { p1, p2, p3, p4, p5 };
 
-                //TODO run through each planet and remake planets that are too close
 
                 // initialize random object
                 Random rng = new Random();
@@ -198,7 +196,6 @@ namespace SpaceGame
                             //change planet, subtract days, run random event, shipX ShipY = PlanetX PlanetY
                             CurrentPlanet = planetArray[userInput];
                             ship.Time -= distanceToPlanet;
-                            //TODO change ship coordinates
                             Console.Clear();
                             timeEvent.Trigger(ship);
                             hullEvent.Trigger(ship);
@@ -207,7 +204,7 @@ namespace SpaceGame
                     else { Console.WriteLine("Enter something valid. Press any key to continue..."); Console.ReadLine(); }
                 }
             }
-            else if (mMenuOpt == 2) // LOAD GAME
+            else if (MenuOpt == 2) // LOAD GAME
             {
                 // TODO prompt for username and load game if exists
             }
