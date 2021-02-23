@@ -13,46 +13,7 @@ namespace SpaceGame
         public static List<Difficulty> difficultyList = new List<Difficulty>();
         static void Main(string[] args)
         {
-            #region PseudoCode
-
-            {
-                //start game
-                //show main menu (jason)
-                // get username
-                // difficulty (jason TODO)
-                // initialize planets
-                // initialize events
-                // initialize ship
-                // show game setting/start scenario
-                // while (!GameOver(checks fuel, hull, etc))
-                //ShowPlanetOptions() "mine, store, sell, buy, getN&R, travel"
-                //Get user input
-                //if user input == store
-                //p1.ShowStore FOR STARTING PLANET
-                //if user input == sell
-                //sell(name, amount)
-                // Event
-                //if user input == buy
-                //buy(name, amount)
-                // Event
-                //if user input == mine
-                //mine(days), run random event
-                //if user input == get name and resources
-                //GetNameResources()
-                //if user input == travel
-                //show all plannets except current
-                //Show each planet natural resource and name
-                //show DistanceToShip(shipX, shipY) = distance in days to planet
-                //get user input
-                //if user input == earth
-                //if all upgrades TRUE and fuel and hull full then WinGame()
-             //change planet, subtract days, run random event, shipX ShipY = PlanetX PlanetY
-             }//Collapsed Pseudocode
-
-            #endregion
-
             Console.SetWindowSize(150, 30);
-
 
             //start game
             //show main menu (jason)
@@ -68,32 +29,21 @@ namespace SpaceGame
                 Console.Clear();
 
                 // initialize planets
-                Planet p1 = new Planet("Gallifrey", "Gold", difficulty, 15, 100, 100);
-                Planet p2 = new Planet("Cadia", "Gold", difficulty, 15, 100, 100);
-                Planet p3 = new Planet("Caprica", "Fuel", difficulty, 100, 15, 100);
-                Planet p4 = new Planet("Dagobah", "Fuel", difficulty, 100, 15, 100);
-                Planet p5 = new Planet("Cybertron", "Hull Material", difficulty, 100, 200, 15);
-                Planet[] planetArray = { p1, p2, p3, p4, p5 };
-                foreach(Planet planet in planetArray) { planetList.Add(planet); }
+                Planet[] planetArray = LoadPlanets(difficulty);
+
                 // initialize random object
                 Random rng = new Random();
 
-                //TODO check if planets are too close
-
-     
+                // TODO: check if planets are too close
 
                 // initialize ship
                 shipList.Add(new Ship(difficulty));
                 Planet StartingPlanet = planetArray[rng.Next(5)]; //gets random starting planet
 
                 // show game setting/start scenario
-                Utility.ShowSetting(StartingPlanet, shipList[0].Time);
-                Console.WriteLine("\nPress any key to continue");
-                Console.ReadKey();
-                shipList[0].CurrentPlanetName = StartingPlanet.PlanetName;
-                
+                ShowStartScenario(StartingPlanet);
 
-                
+                shipList[0].CurrentPlanetName = StartingPlanet.PlanetName;
             }
             else if (MenuOpt == 2) // LOAD GAME
             {
@@ -112,7 +62,7 @@ namespace SpaceGame
                 Difficulty difficulty = difficultyList[0];
                 // initialize events
                 FuelEvent fuelEvent = new FuelEvent(difficulty);
-                GoldEvent goldEvent = new GoldEvent(difficulty);
+                CoinEvent goldEvent = new CoinEvent(difficulty);
                 HullEvent hullEvent = new HullEvent(difficulty);
                 TimeEvent timeEvent = new TimeEvent(difficulty);
                 EasterEggEvent easterEgg = new EasterEggEvent(difficulty);
@@ -202,10 +152,10 @@ namespace SpaceGame
                             //Show each planet natural resource and name
                             Console.WriteLine($"[{Array.IndexOf(planetArray, planet)}] {planet.GetNameAndResource()}");
                             //show DistanceToShip(shipX, shipY) = distance in days to planet
-                            Console.WriteLine($"Distance from ship in days: {planet.DistanceToShip(planet.PlanetCords.Item1, planet.PlanetCords.Item2, CurrentPlanet)}");
+                            Console.WriteLine($"Distance from ship in days: {planet.DistanceToShip(planet.PlanetCords.Item1, planet.PlanetCords.Item2, CurrentPlanet)}" + "\n");
                         }
                     }
-                    Console.WriteLine($"[{planetArray.Length}] Planet: Earth");
+                    Console.WriteLine($"[{planetArray.Length}] Planet: Earth" + "\n");
                     Console.WriteLine($"[{planetArray.Length + 1}] Return to Store");
 
                     //get user input
@@ -213,7 +163,7 @@ namespace SpaceGame
                     userInput = Menu.GetUserInput(planetArray.Length + 1, ZeroIndex);
                     if (userInput == planetArray.Length)//user selects earth, the last planet in the options
                     {
-                        if (TravelToEarth(ship) == false) //means that not all upgrades are complete
+                        if (CanTravelToEarth(ship) == false) //means that not all upgrades are complete
                         {
                             Console.WriteLine(
                                 "\nSorry but your ship will not make the journey, select a different planet\nPress any key to continue...");
@@ -241,6 +191,8 @@ namespace SpaceGame
                         Console.WriteLine(timeEvent.Trigger(ship));
                         Console.WriteLine(hullEvent.Trigger(ship));
                         Console.WriteLine(fuelEvent.Trigger(ship));
+                        Console.WriteLine("Press any key to continue");
+                        Console.ReadKey();
                     }
                 }
                 else if (userInput == (int)PlanetOptions.save)
@@ -258,16 +210,29 @@ namespace SpaceGame
             }
         }
 
-        static bool CheckGameOver(Ship ship)
+        private static Planet[] LoadPlanets(Difficulty difficulty)
         {
-            if (ship.Hull <= 0)
-                return true;
-            if (ship.Time <= 0)
-                return true;
-            else return false;
+            Planet p1 = new Planet("Gallifrey", "Gold", difficulty, 15, 100, 100);
+            Planet p2 = new Planet("Cadia", "Gold", difficulty, 15, 100, 100);
+            Planet p3 = new Planet("Caprica", "Fuel", difficulty, 100, 15, 100);
+            Planet p4 = new Planet("Dagobah", "Fuel", difficulty, 100, 15, 100);
+            Planet p5 = new Planet("Cybertron", "Hull Material", difficulty, 100, 200, 15);
+            Planet[] planetArray = { p1, p2, p3, p4, p5 };
+            foreach (Planet planet in planetArray) { planetList.Add(planet); }
+
+            return planetArray;
         }
 
-        static bool TravelToEarth(Ship ship)
+        private static void ShowStartScenario(Planet StartingPlanet)
+        {
+            Utility.ShowSetting(StartingPlanet, shipList[0].Time);
+            Console.WriteLine("\nPress any key to continue");
+            Console.ReadKey();
+        }
+
+        static bool CheckGameOver(Ship ship) => ship.Hull <= 0 || ship.Time <= 0;
+
+        static bool CanTravelToEarth(Ship ship)
         {
             if (ship.HullUpgrade && ship.FuelUpgrade && ship.Fuel == ship.FuelMax && ship.Hull == ship.HullMax)
                 return true;

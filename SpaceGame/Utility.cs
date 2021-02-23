@@ -13,8 +13,6 @@ namespace SpaceGame
             return (Difficulty)input;
         }
 
-
-
         static public void ShowSetting(Planet planet, int DaysLeft)
         {
             Console.WriteLine($"You are marooned on a desolate world, light years from Earth." +

@@ -16,6 +16,7 @@ namespace SpaceGame
         public bool HullUpgrade { get; set; }
         public string CurrentPlanetName { get; set; }
         internal Ship() { }
+
         public Ship(Difficulty difficulty)
         {
             Time = 500 * (int)difficulty;  //days
