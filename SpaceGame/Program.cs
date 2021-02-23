@@ -241,6 +241,8 @@ namespace SpaceGame
                         Console.WriteLine(timeEvent.Trigger(ship));
                         Console.WriteLine(hullEvent.Trigger(ship));
                         Console.WriteLine(fuelEvent.Trigger(ship));
+                        Console.WriteLine("Press any key to continue");
+                        Console.ReadKey();
                     }
                 }
                 else if (userInput == (int)PlanetOptions.save)
