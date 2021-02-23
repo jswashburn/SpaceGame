@@ -8,6 +8,8 @@ namespace SpaceGame
         int hullLost => new Random().Next(difficulty / 3, difficulty * 2);
         int hullGained => new Random().Next(difficulty, difficulty * 2);
 
+        HullEvent() : base() { }
+
         public HullEvent(Difficulty difficulty) : base(difficulty) { }
 
         protected override string NegativeEvent(Ship ship)

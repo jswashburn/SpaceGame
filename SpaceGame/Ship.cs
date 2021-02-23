@@ -3,11 +3,11 @@ namespace SpaceGame
 {
     class Ship
     {
-        public int Time { get; set; }    
+        public int Time { get; set; }    //
         public int Coins { get; set; }      
         public int Fuel { get; set; }
         public int Gold { get; set; }
-        public int Hull { get; set; }    
+        public int Hull { get; set; }    //
         public int FuelMax { get; set; }
         public int GoldMax { get; set; }      
         public int HullMax { get; set; }     
@@ -15,6 +15,9 @@ namespace SpaceGame
         public bool GoldUpgrade { get; set; }
         public bool HullUpgrade { get; set; }
         public string CurrentPlanetName { get; set; }
+        public bool CanTravelToEarth
+            => HullUpgrade && FuelUpgrade && (Fuel == FuelMax) && (Hull == HullMax);
+
         internal Ship() { }
 
         public Ship(Difficulty difficulty)

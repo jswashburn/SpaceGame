@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using color = SpaceGame.ConsoleColorManager;
 
 namespace SpaceGame
 {
@@ -13,16 +12,15 @@ namespace SpaceGame
             return (Difficulty)input;
         }
 
-        static public void ShowSetting(Planet planet, int DaysLeft)
+        static public void ShowSetting(Planet planet, int daysLeft)
         {
-            Console.WriteLine($"You are marooned on a desolate world, light years from Earth." +
-                              $"\nThe name of this planet is \"{planet.PlanetName}\".\nYou remember your purpose, " +
-                              $"the Earth needs you and your haul of dark matter to power weapons that will" +
-                              $" subdue an incoming alien invasion.\nThese aliens are {DaysLeft} days from" +
-                              $" Earth. \nFully upgrade and stock your supplies so you can make the perilous journey" +
-                              $" across the cosmos to defend your home.");
+            "You are marooned on a desolate world, light years from Earth. The name of this planet is ".Write();
+            planet.PlanetName.WriteLine(planet.PlanetNameCColor);
+            "You remember your purpose, the Earth needs you and your haul of ".Write();
+            "dark matter ".Write(color.ResourceColor("Fuel"));
+            "to power a weapon that will subdue the incoming alien invasion.\nThe aliens are ".Write();
+            daysLeft.ToString().Write(color.ResourceColor("Time"));
+            " days from Earth.\n\nFully upgrade and stock your supplies so you can make the perilous journey across the cosmos to defend your home.".WriteLine();
         }
-
     }
-
 }

@@ -8,9 +8,11 @@ namespace SpaceGame
 {
     class Menu
     {
+        const int WINDOW_OFFSET = 30;
+        const int TITLE_LENGTH = 50;
+
         public void ShowMainMenu(int length = 50)
         {
-            Console.ForegroundColor = ConsoleColor.White;
             string message = "Main Menu";
             int frameSize = length;
             int center = ((frameSize / 2) + (message.Length / 2));
@@ -19,43 +21,53 @@ namespace SpaceGame
             Console.WriteLine("[1] New Game\n[2] Load Game\n[3] Quit");
         }
 
-        static public void ShowBanner(string message, Ship ship, int length = 50)
+        static public void ShowBanner(string message, Ship ship)
         {
+            // Center message in dashes
+            int center = (TITLE_LENGTH / 2) + (message.Length / 2);
+            message = message.PadLeft(center, '-').PadRight(TITLE_LENGTH, '-');
             
-            int frameSize = length;
-            int center = ((frameSize / 2) + (message.Length / 2));
-            message = message.PadLeft(center, '-').PadRight(frameSize, '-');
             Console.WriteLine(message);
 
-            string coin = $"Coin: {ship.Coins}";
-            string gold = $"Gold: {ship.Gold}/{ship.GoldMax}";
-            string time = $"Days left: {ship.Time}";
-            string fuel = $"Fuel: {ship.Fuel}/{ship.FuelMax}";
-            string hull = $"Hull: {ship.Hull}/{ship.HullMax}";
-            Console.SetCursorPosition(Console.WindowWidth - 15, Console.CursorTop + 1);
-            Console.Write(coin);
-            Console.SetCursorPosition(Console.WindowWidth - 15, Console.CursorTop + 1);//Moves cursor up one line and to right edge of console
-            Console.Write(gold);
-            Console.SetCursorPosition(Console.WindowWidth - 15, Console.CursorTop + 1);
-            Console.Write(fuel);
-            Console.SetCursorPosition(Console.WindowWidth - 15, Console.CursorTop + 1);
-            Console.Write(hull);
-            Console.SetCursorPosition(Console.WindowWidth - 15, Console.CursorTop + 1);
-            Console.Write(time);
-            Console.SetCursorPosition(0, Console.CursorTop - 5);
+            ShowHUD(ship);
 
+            Console.SetCursorPosition(0, Console.CursorTop - 5);
+        }
+
+        static void ShowHUD(Ship ship)
+        {
+            //Moves cursor up one line and to right edge of console
+            Console.SetCursorPosition(Console.WindowWidth - WINDOW_OFFSET, Console.CursorTop + 1);
+            Console.Write("Coin: ");
+            WriteColored(ship.Coins.ToString(), ConsoleColor.Yellow);
+
+            Console.SetCursorPosition(Console.WindowWidth - WINDOW_OFFSET, Console.CursorTop + 1);
+            Console.Write("Gold: ");
+            WriteColored($"{ship.Gold}/{ship.GoldMax}", ConsoleColor.DarkYellow);
+
+            Console.SetCursorPosition(Console.WindowWidth - WINDOW_OFFSET, Console.CursorTop + 1);
+            Console.Write("Fuel: ");
+            WriteColored($"{ship.Fuel}/{ship.FuelMax}", ConsoleColor.DarkMagenta);
+
+            Console.SetCursorPosition(Console.WindowWidth - WINDOW_OFFSET, Console.CursorTop + 1);
+            Console.Write("Hull Integrity: ");
+            WriteColored($"{ship.Hull}/{ship.HullMax}", ConsoleColor.Blue);
+
+            Console.SetCursorPosition(Console.WindowWidth - WINDOW_OFFSET, Console.CursorTop + 1);
+            Console.Write("Time: ");
+            WriteColored(ship.Time.ToString(), ConsoleColor.Red);
         }
 
         public static int GetUserInput(int menuLength, bool ZeroIndex = false)
         {
-            Console.WriteLine("Enter your selection");
+            Console.Write("Enter your selection: ");
             string input = Console.ReadLine();
             Console.SetCursorPosition(0, Console.CursorTop - 1);//Moves cursor up one line
             Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r");//Clears current line
             int selection;
             while (true)
             {
-                if (!Int32.TryParse(input, out int j))
+                if (!Int32.TryParse(input, out int parsedInput))
                 {
                     Console.WriteLine("Please enter a valid number: ");//writes and makes new line
                     input = Console.ReadLine(); //writes on same line as above and then makes new line
@@ -65,7 +77,7 @@ namespace SpaceGame
                     Console.SetCursorPosition(0, Console.CursorTop - 1);//Moves cursor up one line
                     Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r");//Clears current line
                 }
-                else if (ZeroIndex == false && (j > menuLength || j <= 0))
+                else if (ZeroIndex == false && (parsedInput > menuLength || parsedInput <= 0))
                 {
                     Console.WriteLine("Number is not in menu range");
                     input = Console.ReadLine(); //writes on same line as above and then makes new line
@@ -75,7 +87,7 @@ namespace SpaceGame
                     Console.SetCursorPosition(0, Console.CursorTop - 1); //Moves cursor up one line
                     Console.Write("\r" + new string(' ', Console.WindowWidth - 15) + "\r"); //Clears current line
                 }
-                else if (j > menuLength || j < 0)
+                else if (parsedInput > menuLength || parsedInput < 0)
                 {
                     Console.WriteLine("Number is not in menu range");
                     input = Console.ReadLine(); //writes on same line as above and then makes new line
@@ -87,7 +99,7 @@ namespace SpaceGame
                 }
                 else
                 {
-                    selection = j;
+                    selection = parsedInput;
                     break;
                 }
             }
@@ -132,7 +144,7 @@ namespace SpaceGame
         static public string StoreSellMenu(Planet planet, Ship ship)
         {
             Console.Clear();
-            Menu.ShowBanner(planet.PlanetName, ship);
+            ShowBanner(planet.PlanetName, ship);
             Console.WriteLine($"Select What you would like to Sell:\n[1] Gold\n[2] Fuel\n[3] Hull");
             int choice = GetUserInput(3);
             if (choice == 1) return "gold";
@@ -141,7 +153,7 @@ namespace SpaceGame
             else return "Did you make a selection?";
         }
 
-        static public int GetAmount(string buyOrsell)  //NOT SURE IF THIS WORKS YOLO
+        static public int GetBuySellAmount(string buyOrsell)  //NOT SURE IF THIS WORKS YOLO
         {
             Console.WriteLine($"How much would you like to {buyOrsell}?");
             string input = Console.ReadLine();
@@ -178,6 +190,14 @@ namespace SpaceGame
         public void Credits()
         {
             //TODO
+        }
+
+        static void WriteColored(string s, ConsoleColor color, 
+            ConsoleColor defaultColor = ConsoleColor.White)
+        {
+            Console.ForegroundColor = color;
+            Console.Write(s);
+            Console.ForegroundColor = defaultColor;
         }
     }
 }

@@ -8,7 +8,8 @@ namespace SpaceGame
         int fuelLost => new Random().Next(difficulty / 3, difficulty * 2);
         int fuelGained => new Random().Next(difficulty, difficulty * 2);
 
-        // Use the base class constructor
+        FuelEvent() : base() { }
+
         public FuelEvent(Difficulty difficulty) : base(difficulty) { }
 
         protected override string NegativeEvent(Ship ship)
