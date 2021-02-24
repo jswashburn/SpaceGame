@@ -2,7 +2,7 @@
 
 namespace SpaceGame
 {
-    class FuelEvent : RandomEvent
+    public class FuelEvent : RandomEvent
     {
         // Property getters scale amount of fuel lost/gained with difficulty
         int fuelLost => new Random().Next(difficulty / 3, difficulty * 2);

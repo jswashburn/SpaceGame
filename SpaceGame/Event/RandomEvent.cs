@@ -2,9 +2,9 @@
 
 namespace SpaceGame
 {
-    abstract class RandomEvent
+    abstract public class RandomEvent
     {
-        protected int difficulty;
+        public int difficulty;
 
         protected virtual bool shouldTrigger => difficulty > new Random().Next(0, 25);
         protected virtual bool shouldTriggerPositive => difficulty / 2 > new Random().Next(0, 25);
@@ -13,7 +13,7 @@ namespace SpaceGame
 
         public RandomEvent(Difficulty difficulty) => this.difficulty = (int)difficulty * 10;
 
-        public virtual string Trigger(Ship ship, string defaultMessage = "")
+        public virtual string Trigger(Ship ship, string defaultMessage = "You had such a nice time travelling.")
         {
             if (shouldTrigger)
                 return NegativeEvent(ship);

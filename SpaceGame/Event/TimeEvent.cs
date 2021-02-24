@@ -2,7 +2,7 @@
 
 namespace SpaceGame
 {
-    class TimeEvent : RandomEvent
+    public class TimeEvent : RandomEvent
     {
         // Property getters scale amount of time lost/gained with difficulty
         int timeLost => new Random().Next(difficulty / 3, difficulty * 2);

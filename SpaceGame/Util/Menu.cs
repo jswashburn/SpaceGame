@@ -181,17 +181,6 @@ namespace SpaceGame
 
         }
 
-
-        public void GameOver()
-        {
-            //TODO
-        }
-
-        public void Credits()
-        {
-            //TODO
-        }
-
         static void WriteColored(string s, ConsoleColor color, 
             ConsoleColor defaultColor = ConsoleColor.White)
         {

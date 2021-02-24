@@ -22,7 +22,7 @@ namespace SpaceGame
         {
             Console.SetWindowSize(150, 30);
 
-            //show main menu (jason)
+            //show main menu
             new Menu().ShowMainMenu();
             int MenuOpt = Menu.GetUserInput(3);
             Console.Clear();
@@ -216,8 +216,8 @@ namespace SpaceGame
         {
             // Gets days travel it takes to get to destination planet
             int distanceToPlanet = game.Planets[selectedPlanet]
-                .DistanceToShip(game.Planets[selectedPlanet].PlanetCords.Item1,
-                game.Planets[selectedPlanet].PlanetCords.Item2, game.CurrentPlanet);
+                .DistanceToShip(game.Planets[selectedPlanet].PlanetCordsX,
+                game.Planets[selectedPlanet].PlanetCordsY, game.CurrentPlanet);
 
             Console.WriteLine($"Traveling to planet {game.Planets[selectedPlanet].PlanetName}....");
             Menu.LoadingDisplay();

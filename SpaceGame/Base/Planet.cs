@@ -10,7 +10,8 @@ namespace SpaceGame
         public string PlanetName { get; set; }
         public string PlanetResource { get; set; }
         public int PlanetDifficulty { get; set; }
-        public (int, int) PlanetCords { get; set; }
+        public int PlanetCordsX { get; set; }
+        public int PlanetCordsY { get; set; }
         public int PlanetGoldCost { get; set; }
         public int PlanetFuelCost { get; set; }
         public int PlanetHullCost { get; set; }
@@ -41,7 +42,8 @@ namespace SpaceGame
             this.PlanetName = name;
             this.PlanetResource = resource;
             this.PlanetDifficulty = (int)difficulty + 1;
-            this.PlanetCords = (r.Next(1, 251), r.Next(1, 251));
+            this.PlanetCordsX = r.Next(1, 301);
+            this.PlanetCordsY = r.Next(1, 301);
             this.PlanetGoldCost = goldCost;
             this.PlanetFuelCost = fuelCost;
             this.PlanetHullCost = hullCost;
@@ -55,7 +57,8 @@ namespace SpaceGame
         internal int DistanceToShip(int x, int y, Planet CurrentPlanet) //returns difference of caller and current planet
         {
             double z = Math.Sqrt((x * x) + (y * y));
-            (int px, int py) = CurrentPlanet.PlanetCords;
+            int px = CurrentPlanet.PlanetCordsX;
+            int py = CurrentPlanet.PlanetCordsY;
             double pz = Math.Sqrt((px * px) + (py * py));
             return ((int)Math.Round(Math.Abs(z - pz))) / 10;
         }
@@ -122,7 +125,7 @@ namespace SpaceGame
             return $"You sold {amount} of {switchCase} for {sale} coin. You now have {ship.Coins} coin.";
         }
 
-        internal string Buy(string switchCase, int amount, Ship ship, Planet planet)
+        public string Buy(string switchCase, int amount, Ship ship, Planet planet)
         {
             string message = "";
             switch (switchCase.ToLower())

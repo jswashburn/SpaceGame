@@ -2,7 +2,7 @@
 
 namespace SpaceGame
 {
-    class HullEvent : RandomEvent
+    public class HullEvent : RandomEvent
     {
         // Property getters scale amount of hull integrity lost/gained with difficulty
         int hullLost => new Random().Next(difficulty / 3, difficulty * 2);

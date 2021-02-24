@@ -2,7 +2,7 @@
 
 namespace SpaceGame
 {
-    class GameStateManager
+    public class GameStateManager
     {
         public Planet CurrentPlanet { get; set; }
         public Planet[] Planets { get; set; }
@@ -26,7 +26,7 @@ namespace SpaceGame
             }
         }
 
-        GameStateManager() { }
+        public GameStateManager() { }
 
         public GameStateManager(Difficulty difficulty)
         {
