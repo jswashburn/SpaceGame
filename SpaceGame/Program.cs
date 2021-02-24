@@ -22,7 +22,7 @@ namespace SpaceGame
         {
             Console.SetWindowSize(150, 30);
 
-            //show main menu (jason)
+            //show main menu
             new Menu().ShowMainMenu();
             int MenuOpt = Menu.GetUserInput(3);
             Console.Clear();
