@@ -15,7 +15,7 @@ namespace SpaceGame
                     $"[{i}] ".Write();
                     $"{p.PlanetName} ".Write(p.PlanetResourceCColor);
 
-                    int days = p.DistanceToShip(p.PlanetCords.Item1, p.PlanetCords.Item2, currentPlanet);
+                    int days = p.DistanceToShip(p.PlanetCordsX, p.PlanetCordsY, currentPlanet);
 
                     " Distance to ship in days: ".Write();
                     days.ToString().WriteLine(ConsoleColor.DarkGray);

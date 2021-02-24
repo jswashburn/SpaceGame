@@ -13,7 +13,7 @@ namespace SpaceGame
 
         public RandomEvent(Difficulty difficulty) => this.difficulty = (int)difficulty * 10;
 
-        public virtual string Trigger(Ship ship, string defaultMessage = "")
+        public virtual string Trigger(Ship ship, string defaultMessage = "You had such a nice time travelling.")
         {
             if (shouldTrigger)
                 return NegativeEvent(ship);
