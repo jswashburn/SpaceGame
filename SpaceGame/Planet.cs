@@ -1,26 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using color = SpaceGame.ConsoleColorManager;
 
 namespace SpaceGame
 {
-    public enum Store
-    {
-        buy = 1,
-        sell,
-        cancel
-    }
-
-    public enum PlanetOptions
-    {
-        store = 1,
-        mine,
-        travel,
-        save,
-        quit
-    }
-
-    internal class Planet
+    public class Planet
     {
         public string PlanetName { get; set; }
         public string PlanetResource { get; set; }
@@ -32,15 +17,25 @@ namespace SpaceGame
         public static int ShipGoldUpgrade { get; set; }
         public static int ShipFuelUpgrade { get; set; }
         public static int ShipHullUpgrade { get; set; }
+        public ConsoleColor PlanetNameCColor { get; set; }
+        public ConsoleColor PlanetResourceCColor { get; set; }
 
-        public string ShowPlanetMenu(Planet planet)
+        public void PlanetOptions()
         {
-            return $"Planet: {PlanetName}. Natural resource available to mine: {PlanetResource}.\n[1] Store\n[2] Mine\n[3] Travel\n[4] Save Game\n[5] Quit";
+            "Planet: ".Write();
+            PlanetName.Write(PlanetNameCColor);
+            " Natural resource available to mine: ".Write(); 
+            PlanetResource.WriteLine(PlanetResourceCColor);
+            "[1] Store".WriteLine();
+            "[2] Mine".WriteLine();
+            "[3] Travel".WriteLine();
+            "[4] Save Game".WriteLine();
+            "[5] Quit".WriteLine();
         }
 
         internal Planet() { }
         
-        internal Planet(string name, string resource, Difficulty difficulty, int goldCost, int fuelCost, int hullCost)
+        internal Planet(string name, string resource, Difficulty difficulty, int goldCost, int fuelCost, int hullCost, ConsoleColor consoleColor = ConsoleColor.DarkGray)
         {
             Random r = new Random();
             this.PlanetName = name;
@@ -50,6 +45,8 @@ namespace SpaceGame
             this.PlanetGoldCost = goldCost;
             this.PlanetFuelCost = fuelCost;
             this.PlanetHullCost = hullCost;
+            this.PlanetNameCColor = consoleColor;
+            this.PlanetResourceCColor = color.ResourceColor(resource);
             ShipGoldUpgrade = 1200 / (int)difficulty;
             ShipFuelUpgrade = 3000 / (int)difficulty;
             ShipHullUpgrade = 3000 / (int)difficulty;
@@ -63,15 +60,39 @@ namespace SpaceGame
             return ((int)Math.Round(Math.Abs(z - pz))) / 10;
         }
 
-        internal string ShowStore(Planet planet, Ship ship)
+        internal void ShowStore()
         {
-            Menu.ShowBanner(planet.PlanetName, ship);
-            return $"Gold is available for {planet.PlanetGoldCost} coin\n" +
-                $"Fuel is available for {planet.PlanetFuelCost} coin\n" +
-                $"Hull repair parts are avable for {planet.PlanetHullCost} coin\n" +
-                $"Ship gold capacity upgrade costs {ShipGoldUpgrade} coin\n" +
-                $"Ship fuel capacity upgrade costs {ShipFuelUpgrade} coin\n" +
-                $"Ship hull capacity upgrade costs {ShipHullUpgrade} coin\n\n";
+            ConsoleColor coinsColor = color.ResourceColor("Coins");
+
+            "Gold ".Write(color.ResourceColor("Gold"));
+            "is available for ".Write();
+            PlanetGoldCost.ToString().Write(coinsColor);
+            " coin".WriteLine();
+
+            "Fuel ".Write(color.ResourceColor("Fuel"));
+            "is available for ".Write();
+            PlanetFuelCost.ToString().Write(coinsColor);
+            " coin".WriteLine();
+
+            "Hull ".Write(color.ResourceColor("Hull Material"));
+            "repair parts are available for ".Write();
+            PlanetHullCost.ToString().Write(coinsColor);
+            " coin".WriteLine();
+
+            "Gold capacity upgrade ".Write(ConsoleColor.Green);
+            "costs ".Write();
+            ShipGoldUpgrade.ToString().Write(coinsColor);
+            " coin ".WriteLine();
+
+            "Fuel capacity upgrade ".Write(ConsoleColor.Green);
+            "costs ".Write();
+            ShipFuelUpgrade.ToString().Write(coinsColor);
+            " coin ".WriteLine();
+
+            "Hull capacity upgrade ".Write(ConsoleColor.Green);
+            "costs ".Write();
+            ShipHullUpgrade.ToString().Write(coinsColor);
+            " coin \n\n".WriteLine();
         }
 
         internal string Sell(string switchCase, int amount, Ship ship, Planet planet)

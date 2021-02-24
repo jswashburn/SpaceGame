@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
@@ -8,278 +7,257 @@ namespace SpaceGame
 {
     class Program
     {
-        public static List<Ship> shipList = new List<Ship>();
-        public static List<Planet> planetList = new List<Planet>();
-        public static List<Difficulty> difficultyList = new List<Difficulty>();
+        static GameStateManager game;
+
         static void Main(string[] args)
+        {
+            StartMenu();
+
+            while (!game.GameOver)
+                PlanetMenu();
+        }
+
+        #region StartMenu
+        static void StartMenu()
         {
             Console.SetWindowSize(150, 30);
 
-            //start game
             //show main menu (jason)
-            Menu menu = new Menu();
-            menu.ShowMainMenu();
+            new Menu().ShowMainMenu();
             int MenuOpt = Menu.GetUserInput(3);
             Console.Clear();
 
-            if (MenuOpt == 1) // NEW GAME, GET USERNAME, get difficulty
+            switch (MenuOpt)
             {
-                Difficulty difficulty = Utility.PromptUserForDifficulty(); //this will be default
-                difficultyList.Add(difficulty);
-                Console.Clear();
-
-                // initialize planets
-                Planet[] planetArray = LoadPlanets(difficulty);
-
-                // initialize random object
-                Random rng = new Random();
-
-                // TODO: check if planets are too close
-
-                // initialize ship
-                shipList.Add(new Ship(difficulty));
-                Planet StartingPlanet = planetArray[rng.Next(5)]; //gets random starting planet
-
-                // show game setting/start scenario
-                ShowStartScenario(StartingPlanet);
-
-                shipList[0].CurrentPlanetName = StartingPlanet.PlanetName;
-            }
-            else if (MenuOpt == 2) // LOAD GAME
-            {
-                LoadJson();
-            }
-            else if (MenuOpt == 3)//EXIT
-            {
-                Console.WriteLine("Thank you for playing!");
-                Thread.Sleep(2000);
-                Environment.Exit(1);
-            }
-            // while (!GameOver(checks fuel, hull, etc))
-            Ship ship = shipList[0];
-            while (!CheckGameOver(ship))
-            {
-                Difficulty difficulty = difficultyList[0];
-                // initialize events
-                FuelEvent fuelEvent = new FuelEvent(difficulty);
-                CoinEvent goldEvent = new CoinEvent(difficulty);
-                HullEvent hullEvent = new HullEvent(difficulty);
-                TimeEvent timeEvent = new TimeEvent(difficulty);
-                EasterEggEvent easterEgg = new EasterEggEvent(difficulty);
-                
-                Planet[] planetArray = new Planet[planetList.Count];
-                for (int i = 0; i < planetList.Count; i++)
-                {
-                    planetArray[i] = planetList[i];
-                }
-                Planet CurrentPlanet = new Planet();
-                foreach(Planet planet in planetArray)
-                {
-                    if(planet.PlanetName == ship.CurrentPlanetName)
+                case 1:
                     {
-                        CurrentPlanet = planet;
+                        StartNewGame();
+                        ShowStartScenario();
+                        break;
                     }
-                }
-
-                Console.Clear();
-                Menu.ShowBanner(CurrentPlanet.PlanetName, ship);
-                Console.WriteLine(CurrentPlanet.ShowPlanetMenu(CurrentPlanet)); //"store, mine, travel, save, quit"
-
-                int userInput = Menu.GetUserInput(5); //Because there are 4 things to do in the planet menu
-                Console.Clear();
-                if (userInput == (int)PlanetOptions.store)
-                {
-                    //ShowStore
-                    Console.WriteLine(CurrentPlanet.ShowStore(CurrentPlanet, ship));
-                    Console.WriteLine("Select [1] to buy, [2] to sell or [3] to cancel: ");
-                    //int selection = Menu.GetUserInput(3);
-                    //if (selection == 1)
-
-                    userInput = Menu.GetUserInput(3);
-                    if (userInput == (int)Store.buy) //input == 1
+                case 2:
                     {
-                        //get string of material, get amount they want(int)
-                        string material = Menu.StoreBuyMenu(CurrentPlanet, ship);
+                        Load();
+                        break;
+                    }
+                case 3:
+                    {
+                        Console.WriteLine("Thank you for playing!");
+                        Thread.Sleep(2000);
+                        Environment.Exit(1);
+                        break;
+                    }
+                default:
+                    break;
+            }
+        }
+
+        static void StartNewGame()
+        {
+            // Start a new game, initialize objects
+            game = new GameStateManager(Utility.PromptUserForDifficulty());
+            Console.Clear();
+        }
+
+        static void ShowStartScenario()
+        {
+            Utility.ShowSetting(game.CurrentPlanet, game.Ship.Time);
+            Console.Write("\nPress any key to continue ");
+            Console.ReadKey();
+        }
+        #endregion
+
+        #region Planet Menu
+        static void PlanetMenu()
+        {
+            ShowPlanetOptions();
+
+            int planetMenuOption = Menu.GetUserInput(5);
+            Console.Clear();
+            switch (planetMenuOption)
+            {
+                case (int)PlanetOptions.Store:
+                    {
+                        StoreMenu();
+                        break;
+                    }
+                case (int)PlanetOptions.Mine:
+                    {
+                        MineMenu();
+                        break;
+                    }
+                case (int)PlanetOptions.Travel:
+                    {
+                        TravelMenu();
+                        break;
+                    }
+                case (int)PlanetOptions.Save:
+                    {
+                        Save();
+                        Console.WriteLine("Saved successfully");
+                        Console.ReadLine();
+                        break;
+                    }
+                case (int)PlanetOptions.Quit:
+                    {
+                        Environment.Exit(0);
+                        break;
+                    }
+                default:
+                    {
+                        Console.WriteLine("Enter something valid. Press any key to continue...");
+                        Console.ReadLine();
+                        break;
+                    }
+            }
+        }
+
+        static void TravelMenu()
+        {
+            ShowTravelOptions();
+
+            int numberPlanets = game.Planets.Length;
+            int selectedPlanet = Menu.GetUserInput(numberPlanets + 1, true);
+
+            if (selectedPlanet == numberPlanets) // Selected Earth
+            {
+                // Player does not have all upgrades
+                if (!game.Ship.CanTravelToEarth)
+                {
+                    Console.WriteLine(
+                        "\nSorry but your ship will not make the journey, select a different planet\nPress any key to continue...");
+                    Console.ReadLine();
+                }
+            }
+            else if (selectedPlanet == numberPlanets + 1) { } // Return to Planet Menu
+            else
+                TravelTo(selectedPlanet);
+        }
+
+        static void MineMenu()
+        {
+            Menu.ShowBanner(game.CurrentPlanet.PlanetName, game.Ship);
+            Console.WriteLine("How many days would you like to mine for?");
+            int NumDaysToMine = Menu.GetUserInput(game.Ship.Time);
+            Console.WriteLine(game.CurrentPlanet.Mine(NumDaysToMine, game.Ship, game.CurrentPlanet));
+            Console.WriteLine("Press any key to continue");
+            Console.ReadKey();
+        }
+
+        static void StoreMenu()
+        {
+            Menu.ShowBanner(game.CurrentPlanet.PlanetName + " Store", game.Ship);
+            Console.WriteLine("Select [1] to buy, [2] to sell or [3] to cancel: \n");
+
+            // Show store selection
+            game.CurrentPlanet.ShowStore();
+
+            switch (Menu.GetUserInput(3))
+            {
+                case (int)Store.Buy:
+                    {
+                        // Get requested material and amount
+                        string material = Menu.StoreBuyMenu(game.CurrentPlanet, game.Ship);
                         if (material == "gold" || material == "fuel" || material == "hull")
                         {
-                            int amount = Menu.GetAmount("buy"); //"how much would you like to BUY"
-                            Console.WriteLine(CurrentPlanet.Buy(material, amount, ship, CurrentPlanet));//returns string
-                            Console.WriteLine(goldEvent.Trigger(ship)); // returns string
+                            int amount = Menu.GetBuySellAmount("buy");
+                            Console.WriteLine(game.CurrentPlanet.Buy(material, amount, game.Ship, game.CurrentPlanet));
+                            Console.WriteLine(game.CoinEvent.Trigger(game.Ship));
                             Console.ReadLine();
                         }
                         else
                         {
-                            Console.WriteLine(Planet.UpgradeShip(material, ship));
-                            Console.WriteLine(goldEvent.Trigger(ship));
+                            Console.WriteLine(Planet.UpgradeShip(material, game.Ship));
+                            Console.WriteLine(game.CoinEvent.Trigger(game.Ship));
                             Console.ReadLine();
                         }
+
+                        break;
                     }
-                    else if (userInput == (int)Store.sell) //input == 2
+                case (int)Store.Sell:
                     {
-                        string material = Menu.StoreSellMenu(CurrentPlanet, ship);
-                        int amount = Menu.GetAmount("sell"); //"how much would you like to SELL"
-                        Console.WriteLine(CurrentPlanet.Sell(material, amount, ship, CurrentPlanet));
-                        Console.WriteLine(goldEvent.Trigger(ship));
+                        // Get requested material and amount
+                        string material = Menu.StoreSellMenu(game.CurrentPlanet, game.Ship);
+                        int amount = Menu.GetBuySellAmount("sell");
+                        Console.WriteLine(game.CurrentPlanet.Sell(material, amount, game.Ship, game.CurrentPlanet));
+                        Console.WriteLine(game.CoinEvent.Trigger(game.Ship));
                         Console.ReadLine();
+                        break;
                     }
-                    else if (userInput == (int)Store.cancel) //return user to previous menu
+                case (int)Store.Cancel: //return user to previous menu
                     {
                         Console.WriteLine("Returning to planet menu...");
-                        Console.WriteLine(easterEgg.Trigger(ship));
+                        Console.WriteLine(game.EasterEgg.Trigger(game.Ship));
                         Thread.Sleep(2000);
+                        break;
                     }
-                    else Console.WriteLine("What kind of input was that??");
-                }
-                else if (userInput == (int)PlanetOptions.mine)
-                {
-                    Menu.ShowBanner(CurrentPlanet.PlanetName, ship);
-                    Console.WriteLine("How many days would you like to mine for?");
-                    int NumDaysToMine = Menu.GetUserInput(ship.Time); //do error checking
-                    Console.WriteLine(CurrentPlanet.Mine(NumDaysToMine, ship, CurrentPlanet));
-                    Console.WriteLine("Press any key to continue");
-                    Console.ReadKey();
-                }
-
-                else if (userInput == (int)PlanetOptions.travel)
-                {
-                    Console.WriteLine($"Current Planet: {CurrentPlanet.PlanetName}");
-                    Console.WriteLine("Select Planet to travel to");
-                    Menu.ShowBanner("", ship);
-                    foreach (Planet planet in planetArray)
-                    {
-                        if (planet != CurrentPlanet)
-                        {
-                            //Show each planet natural resource and name
-                            Console.WriteLine($"[{Array.IndexOf(planetArray, planet)}] {planet.GetNameAndResource()}");
-                            //show DistanceToShip(shipX, shipY) = distance in days to planet
-                            Console.WriteLine($"Distance from ship in days: {planet.DistanceToShip(planet.PlanetCords.Item1, planet.PlanetCords.Item2, CurrentPlanet)}" + "\n");
-                        }
-                    }
-                    Console.WriteLine($"[{planetArray.Length}] Planet: Earth" + "\n");
-                    Console.WriteLine($"[{planetArray.Length + 1}] Return to Store");
-
-                    //get user input
-                    bool ZeroIndex = true;
-                    userInput = Menu.GetUserInput(planetArray.Length + 1, ZeroIndex);
-                    if (userInput == planetArray.Length)//user selects earth, the last planet in the options
-                    {
-                        if (CanTravelToEarth(ship) == false) //means that not all upgrades are complete
-                        {
-                            Console.WriteLine(
-                                "\nSorry but your ship will not make the journey, select a different planet\nPress any key to continue...");
-                            Console.ReadLine();
-                        }
-                        //else//game == win
-                    }
-                    else if (userInput == planetArray.Length + 1)
-                    {
-                        //blank and returns to store
-                    }
-                    else
-                    {
-                        int distanceToPlanet = planetArray[userInput].DistanceToShip(planetArray[userInput].PlanetCords.Item1,
-                                planetArray[userInput].PlanetCords.Item2, CurrentPlanet);
-
-                        Console.WriteLine($"Traveling to planet {planetArray[userInput].PlanetName}....");
-                        Menu.LoadingDisplay();
-                        Console.WriteLine($"{distanceToPlanet} days later...");
-                        //gets number of days travel it takes to get to destination planet
-                        //change planet, subtract days, run random event, shipX ShipY = PlanetX PlanetY
-                        CurrentPlanet = planetArray[userInput];
-                        ship.Time -= distanceToPlanet;
-                        Console.Clear();
-                        Console.WriteLine(timeEvent.Trigger(ship));
-                        Console.WriteLine(hullEvent.Trigger(ship));
-                        Console.WriteLine(fuelEvent.Trigger(ship));
-                        Console.WriteLine("Press any key to continue");
-                        Console.ReadKey();
-                    }
-                }
-                else if (userInput == (int)PlanetOptions.save)
-                {
-                    SaveJson();
-                    Console.WriteLine("Saved successfully");
-                    Console.ReadLine();
-                }
-                else if (userInput == (int)PlanetOptions.quit)
-                {
-                    Environment.Exit(0);
-                }
-
-                else { Console.WriteLine("Enter something valid. Press any key to continue..."); Console.ReadLine(); }
+                default:
+                    Console.WriteLine("What kind of input was that??");
+                    break;
             }
+            return;
         }
 
-        private static Planet[] LoadPlanets(Difficulty difficulty)
+        static void ShowPlanetOptions()
         {
-            Planet p1 = new Planet("Gallifrey", "Gold", difficulty, 15, 100, 100);
-            Planet p2 = new Planet("Cadia", "Gold", difficulty, 15, 100, 100);
-            Planet p3 = new Planet("Caprica", "Fuel", difficulty, 100, 15, 100);
-            Planet p4 = new Planet("Dagobah", "Fuel", difficulty, 100, 15, 100);
-            Planet p5 = new Planet("Cybertron", "Hull Material", difficulty, 100, 200, 15);
-            Planet[] planetArray = { p1, p2, p3, p4, p5 };
-            foreach (Planet planet in planetArray) { planetList.Add(planet); }
-
-            return planetArray;
+            Console.Clear();
+            Menu.ShowBanner(game.CurrentPlanet.PlanetName, game.Ship);
+            game.CurrentPlanet.PlanetOptions();
         }
 
-        private static void ShowStartScenario(Planet StartingPlanet)
+        static void ShowTravelOptions()
         {
-            Utility.ShowSetting(StartingPlanet, shipList[0].Time);
-            Console.WriteLine("\nPress any key to continue");
+            Console.WriteLine($"Current Planet: {game.CurrentPlanet.PlanetName}\n");
+            Menu.ShowBanner("Select Planet to travel to", game.Ship);
+            game.Planets.ShowDetails(game.CurrentPlanet);
+        }
+
+        static void TravelTo(int selectedPlanet)
+        {
+            // Gets days travel it takes to get to destination planet
+            int distanceToPlanet = game.Planets[selectedPlanet]
+                .DistanceToShip(game.Planets[selectedPlanet].PlanetCords.Item1,
+                game.Planets[selectedPlanet].PlanetCords.Item2, game.CurrentPlanet);
+
+            Console.WriteLine($"Traveling to planet {game.Planets[selectedPlanet].PlanetName}....");
+            Menu.LoadingDisplay();
+            Console.WriteLine($"{distanceToPlanet} days later...");
+
+            // Cycle to next planet, subtract days, run random events
+            game.CurrentPlanet = game.Planets[selectedPlanet];
+            game.Ship.Time -= distanceToPlanet;
+
+            Console.Clear();
+            Console.WriteLine(game.TimeEvent.Trigger(game.Ship));
+            Console.WriteLine(game.HullEvent.Trigger(game.Ship));
+            Console.WriteLine(game.FuelEvent.Trigger(game.Ship));
+            Console.WriteLine("Press any key to continue");
             Console.ReadKey();
         }
+        #endregion
 
-        static bool CheckGameOver(Ship ship) => ship.Hull <= 0 || ship.Time <= 0;
-
-        static bool CanTravelToEarth(Ship ship)
+        #region JSON Save/Load
+        static void Save()
         {
-            if (ship.HullUpgrade && ship.FuelUpgrade && ship.Fuel == ship.FuelMax && ship.Hull == ship.HullMax)
-                return true;
-            else return false;
+            string json = JsonSerializer.Serialize(game);
+            File.WriteAllText("game.json", json); // Overwrites file if already exists
         }
 
-        public static void SaveJson()
-        {
-            if (!File.Exists("./planets.json"))
-            {
-                File.CreateText("./planets.json");
-            }
-            if (!File.Exists("./ship.json"))
-            {
-                File.CreateText("./ship.json");
-            }
-            if (!File.Exists("./difficulty.json"))
-            {
-                File.CreateText("./difficulty.json");
-            }
-            string jsonPlanet = JsonSerializer.Serialize(planetList);
-            string jsonShip = JsonSerializer.Serialize(shipList);
-            string jsonDifficulty = JsonSerializer.Serialize(difficultyList);
-            File.WriteAllText("planets.json", jsonPlanet);
-            File.WriteAllText("ship.json", jsonShip);
-            File.WriteAllText("difficulty.json", jsonDifficulty);
-        }
-
-        public static void LoadJson()
+        static void Load()
         {
             try
             {
-                if (File.Exists("./ship.json") && File.Exists("./planets.json") && File.Exists("./difficulty.json"))
+                if (File.Exists("./game.json"))
                 {
-                    string jsonPlanet = File.ReadAllText("./planets.json");
-                    string jsonShip = File.ReadAllText("./ship.json");
-                    string jsonDifficulty = File.ReadAllText("./difficulty.json");
-                    shipList = JsonSerializer.Deserialize<List<Ship>>(jsonShip);
-                    planetList = JsonSerializer.Deserialize<List<Planet>>(jsonPlanet);
-                    difficultyList = JsonSerializer.Deserialize <List<Difficulty>>(jsonDifficulty);
+                    string json = File.ReadAllText("./game.json");
+                    game = JsonSerializer.Deserialize<GameStateManager>(json);
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine($"There was an error loading your files:\n\n\n{e}");
             }
-            
         }
+        #endregion
     }
 }

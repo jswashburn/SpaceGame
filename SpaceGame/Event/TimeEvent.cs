@@ -8,6 +8,8 @@ namespace SpaceGame
         int timeLost => new Random().Next(difficulty / 3, difficulty * 2);
         int timeGained => new Random().Next(difficulty / 2, difficulty * 2);
 
+        TimeEvent() : base() { }
+
         public TimeEvent(Difficulty difficulty) : base(difficulty) { }
 
         protected override string NegativeEvent(Ship ship)

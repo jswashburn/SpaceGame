@@ -8,6 +8,8 @@ namespace SpaceGame
         int coinsLost => new Random().Next(difficulty / 3, difficulty * 2);
         int coinsGained => new Random().Next(difficulty, difficulty * 2);
 
+        CoinEvent() : base() { }
+
         public CoinEvent(Difficulty difficulty) : base(difficulty) { }
 
         protected override string NegativeEvent(Ship ship)

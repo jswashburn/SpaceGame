@@ -6,8 +6,10 @@ namespace SpaceGame
     {
         protected int difficulty;
 
-        protected virtual bool shouldTrigger => difficulty > new Random().Next(0, 100);
-        protected virtual bool shouldTriggerPositive => difficulty / 2 > new Random().Next(0, 100);
+        protected virtual bool shouldTrigger => difficulty > new Random().Next(0, 25);
+        protected virtual bool shouldTriggerPositive => difficulty / 2 > new Random().Next(0, 25);
+
+        public RandomEvent() { }
 
         public RandomEvent(Difficulty difficulty) => this.difficulty = (int)difficulty * 10;
 
