@@ -2,7 +2,7 @@
 
 namespace SpaceGame
 {
-    enum Difficulty
+    public enum Difficulty
     {
         Easy = 1,
         Medium,

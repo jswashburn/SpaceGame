@@ -2,7 +2,7 @@
 
 namespace SpaceGame
 {
-    class EasterEggEvent : RandomEvent
+    public class EasterEggEvent : RandomEvent
     {
         protected override bool shouldTrigger => 5 > new Random().Next(0, 100);
         protected override bool shouldTriggerPositive => 5 > new Random().Next(0, 100);

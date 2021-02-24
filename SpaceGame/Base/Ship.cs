@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 namespace SpaceGame
 {
-    class Ship
+    public class Ship
     {
         public int Time { get; set; }    //
         public int Coins { get; set; }      

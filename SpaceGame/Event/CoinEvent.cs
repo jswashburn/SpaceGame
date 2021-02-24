@@ -2,7 +2,7 @@
 
 namespace SpaceGame
 {
-    class CoinEvent : RandomEvent
+    public class CoinEvent : RandomEvent
     {
         // Property getters scale amount of gold lost/gained with difficulty
         int coinsLost => new Random().Next(difficulty / 3, difficulty * 2);

@@ -2,9 +2,9 @@
 
 namespace SpaceGame
 {
-    abstract class RandomEvent
+    abstract public class RandomEvent
     {
-        protected int difficulty;
+        public int difficulty;
 
         protected virtual bool shouldTrigger => difficulty > new Random().Next(0, 25);
         protected virtual bool shouldTriggerPositive => difficulty / 2 > new Random().Next(0, 25);

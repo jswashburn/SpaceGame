@@ -125,7 +125,7 @@ namespace SpaceGame
             return $"You sold {amount} of {switchCase} for {sale} coin. You now have {ship.Coins} coin.";
         }
 
-        internal string Buy(string switchCase, int amount, Ship ship, Planet planet)
+        public string Buy(string switchCase, int amount, Ship ship, Planet planet)
         {
             string message = "";
             switch (switchCase.ToLower())
